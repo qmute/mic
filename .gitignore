@@ -1,0 +1,14 @@
+.idea
+out
+.DS_Store
+build
+bin
+*.iml
+*.sublime-workspace
+.vscode
+meishi
+meishi.exe
+*.swagger*
+scripts/index.html
+local_test
+usr-srv

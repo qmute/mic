@@ -1,0 +1,5 @@
+package mic
+
+// 针对go-micro 框架的工具库和进一步封装， 降低使用门槛和学习成本
+
+// 主入口见 DefaultService

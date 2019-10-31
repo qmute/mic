@@ -1,0 +1,56 @@
+package mic
+
+import (
+	"time"
+
+	"github.com/afex/hystrix-go/hystrix"
+	"github.com/micro/go-micro"
+	hystrixPlugin "github.com/micro/go-plugins/wrapper/breaker/hystrix"
+	"github.com/micro/go-plugins/wrapper/monitoring/prometheus"
+	limiter "github.com/micro/go-plugins/wrapper/ratelimiter/uber"
+)
+
+type Opt struct {
+	TraceOpt
+	Limit          int           // 限流阈值, 默认 5000 qps
+	HystrixTimeout time.Duration // 熔断时限, 默认 1s
+}
+
+func (p Opt) GetLimit() int {
+	if p.Limit > 0 {
+		return p.Limit
+	}
+	return 5000
+}
+
+// 创建默认 micro.Service ，适用于绝大多数场景
+// 如果想覆盖默认行为不够，可以后续在service.Init()中追加（例如version, port）
+func DefaultService(opt Opt) (micro.Service, func(), error) {
+	tracer, cleanup, err := initGlobalTracer(opt.TraceOpt)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	service := micro.NewService(
+		// common
+		micro.RegisterTTL(time.Second*30),
+		micro.RegisterInterval(time.Second*10),
+		micro.Name(opt.Name),
+
+		// server 相关
+		micro.WrapHandler(serverTraceWrapper(tracer)),                // server trace
+		micro.WrapHandler(prometheus.NewHandlerWrapper()),            // 监控
+		micro.WrapHandler(limiter.NewHandlerWrapper(opt.GetLimit())), // 限流
+
+		// client 相关
+		micro.WrapClient(hystrixPlugin.NewClientWrapper()), // 熔断
+		micro.WrapClient(clientTraceWrapper(tracer)),       // client trace
+	)
+
+	if opt.HystrixTimeout == 0 {
+		opt.HystrixTimeout = time.Second
+	}
+	hystrix.DefaultTimeout = int(opt.HystrixTimeout / time.Millisecond)
+
+	return service, cleanup, nil
+}
