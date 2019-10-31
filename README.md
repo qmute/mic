@@ -11,3 +11,8 @@ install:  `go get gitlab.51baibao.com/server/mic`
     https://gitlab.com/gitlab-org/gitlab-foss/issues/32149
     https://gitlab.com/gitlab-org/gitlab-foss/issues/37832
     https://github.com/golang/go/issues/34094
+    
+    
+change log:
+
+- v0.1 init    
