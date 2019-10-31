@@ -1,4 +1,4 @@
-module gitlab.51baibao.com/server/lib/mic
+module gitlab.51baibao.com/server/mic
 
 go 1.13
 
