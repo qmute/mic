@@ -11,9 +11,12 @@ import (
 )
 
 type Opt struct {
-	TraceOpt
-	Limit          int           // 限流阈值, 默认 5000 qps
+	Name       string // name
+	TracerAddr string // tracer address
+
+	// optional
 	HystrixTimeout time.Duration // 熔断时限, 默认 1s
+	Limit          int           // 限流阈值, 默认 5000 qps
 }
 
 func (p Opt) GetLimit() int {
@@ -26,7 +29,7 @@ func (p Opt) GetLimit() int {
 // 创建默认 micro.Service ，适用于绝大多数场景
 // 如果想覆盖默认行为不够，可以后续在service.Init()中追加（例如version, port）
 func DefaultService(opt Opt) (micro.Service, func(), error) {
-	tracer, cleanup, err := initGlobalTracer(opt.TraceOpt)
+	tracer, cleanup, err := initGlobalTracer(traceOpt{Name: opt.Name, TracerAddr: opt.TracerAddr})
 	if err != nil {
 		return nil, nil, err
 	}

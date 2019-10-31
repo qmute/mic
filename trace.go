@@ -15,13 +15,13 @@ import (
 	jaegercfg "github.com/uber/jaeger-client-go/config"
 )
 
-type TraceOpt struct {
+type traceOpt struct {
 	Name       string // name
 	TracerAddr string // tracer address
 }
 
 // init global tracer
-func initGlobalTracer(opt TraceOpt) (opentracing.Tracer, func(), error) {
+func initGlobalTracer(opt traceOpt) (opentracing.Tracer, func(), error) {
 	cfg := jaegercfg.Configuration{
 		ServiceName: opt.Name, // tracer name
 		Sampler: &jaegercfg.SamplerConfig{
