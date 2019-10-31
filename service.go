@@ -15,6 +15,7 @@ type Opt struct {
 	TracerAddr string // tracer address
 
 	// optional
+	Addr           string        // 监听地址
 	HystrixTimeout time.Duration // 熔断时限, 默认 1s
 	Limit          int           // 限流阈值, 默认 5000 qps
 }
@@ -41,6 +42,7 @@ func DefaultService(opt Opt) (micro.Service, func(), error) {
 		micro.Name(opt.Name),
 
 		// server 相关
+		micro.Address(opt.Addr),
 		micro.WrapHandler(serverTraceWrapper(tracer)),                // server trace
 		micro.WrapHandler(prometheus.NewHandlerWrapper()),            // 监控
 		micro.WrapHandler(limiter.NewHandlerWrapper(opt.GetLimit())), // 限流
