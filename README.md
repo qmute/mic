@@ -4,4 +4,10 @@
 
 主入口见 DefaultService
 
-install:  `go get gitlab.51baibao.com/server/lib/mic`
+install:  `go get gitlab.51baibao.com/server/mic`
+
+注: go get 目前不支持gitlab subgroup。 问题修改后， 此库将移到 server/lib subgroup下
+
+    https://gitlab.com/gitlab-org/gitlab-foss/issues/32149
+    https://gitlab.com/gitlab-org/gitlab-foss/issues/37832
+    https://github.com/golang/go/issues/34094
