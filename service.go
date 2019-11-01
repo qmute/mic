@@ -5,6 +5,7 @@ import (
 
 	"github.com/afex/hystrix-go/hystrix"
 	"github.com/micro/go-micro"
+	"github.com/micro/go-micro/server"
 	hystrixPlugin "github.com/micro/go-plugins/wrapper/breaker/hystrix"
 	"github.com/micro/go-plugins/wrapper/monitoring/prometheus"
 	limiter "github.com/micro/go-plugins/wrapper/ratelimiter/uber"
@@ -27,6 +28,16 @@ func (p Opt) GetLimit() int {
 	return 5000
 }
 
+// 当地址为空时，不作处理，框架会自动填充随机地址。 主动填空为报错
+func safeAddress(addr string) micro.Option {
+	return func(o *micro.Options) {
+		if addr == "" {
+			return
+		}
+		o.Server.Init(server.Address(addr))
+	}
+}
+
 // 创建默认 micro.Service ，适用于绝大多数场景
 // 如果想覆盖默认行为不够，可以后续在service.Init()中追加（例如version, port）
 func DefaultService(opt Opt) (micro.Service, func(), error) {
@@ -42,6 +53,7 @@ func DefaultService(opt Opt) (micro.Service, func(), error) {
 		micro.Name(opt.Name),
 
 		// server 相关
+		safeAddress(opt.Addr),
 		micro.WrapHandler(serverTraceWrapper(tracer)),                // server trace
 		micro.WrapHandler(prometheus.NewHandlerWrapper()),            // 监控
 		micro.WrapHandler(limiter.NewHandlerWrapper(opt.GetLimit())), // 限流
@@ -52,11 +64,6 @@ func DefaultService(opt Opt) (micro.Service, func(), error) {
 		micro.WrapClient(hystrixPlugin.NewClientWrapper()), // 熔断
 		micro.WrapClient(clientTraceWrapper(tracer)),       // client trace， 包含 mq pub trace
 	)
-
-	if opt.Addr != "" {
-		// 当地址为空时，不作处理，框架会自动填充随机地址。 主动填空为报错
-		service.Init(micro.Address(opt.Addr))
-	}
 
 	if opt.HystrixTimeout == 0 {
 		opt.HystrixTimeout = time.Second
