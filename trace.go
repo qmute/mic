@@ -3,8 +3,11 @@ package mic
 import (
 	"context"
 	"fmt"
+	"regexp"
+	"strings"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/micro/go-micro/client"
 	"github.com/micro/go-micro/metadata"
 	"github.com/micro/go-micro/server"
@@ -119,4 +122,29 @@ func ClientTrace(ctx context.Context, name string) (context.Context, opentracing
 	ctx = opentracing.ContextWithSpan(ctx, span)
 	ctx = metadata.NewContext(ctx, md)
 	return ctx, span
+}
+
+var (
+	regHash = regexp.MustCompile(`[0-9a-zA-Z]{17,}`)
+	regCrop = regexp.MustCompile(`/\d{2,}x\d{2,}$`)
+	regNum1 = regexp.MustCompile(`/\d+$`)
+	regNum2 = regexp.MustCompile(`/\d+/`)
+)
+
+// 去除url中的常见变量，替换为占位符
+func normalize(s string) string {
+	s = strings.Split(s, "?")[0]
+	s = regHash.ReplaceAllString(s, ":hash")
+	s = regCrop.ReplaceAllString(s, "/:crop")
+	s = regNum1.ReplaceAllString(s, "/:num")
+	return regNum2.ReplaceAllString(s, "/:num/")
+}
+
+func GinTraceMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		path := normalize(c.Request.URL.EscapedPath())
+		span := ServerTrace(c, "web_api "+path)
+		defer span.Finish()
+		c.Next()
+	}
 }
