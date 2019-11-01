@@ -28,8 +28,8 @@ func (p Opt) GetLimit() int {
 	return 5000
 }
 
-// 当地址为空时，不作处理，框架会自动填充随机地址。 主动填空为报错
-func safeAddress(addr string) micro.Option {
+// 当地址为空时，不作处理，框架会自动填充随机地址。 主动填空会报错
+func optionalAddress(addr string) micro.Option {
 	return func(o *micro.Options) {
 		if addr == "" {
 			return
@@ -53,7 +53,7 @@ func DefaultService(opt Opt) (micro.Service, func(), error) {
 		micro.Name(opt.Name),
 
 		// server 相关
-		safeAddress(opt.Addr),
+		optionalAddress(opt.Addr),
 		micro.WrapHandler(serverTraceWrapper(tracer)),                // server trace
 		micro.WrapHandler(prometheus.NewHandlerWrapper()),            // 监控
 		micro.WrapHandler(limiter.NewHandlerWrapper(opt.GetLimit())), // 限流
