@@ -78,6 +78,22 @@ func clientTraceWrapper(t opentracing.Tracer) client.Wrapper {
 	return ocplugin.NewClientWrapper(t)
 }
 
+// subscribe wrapper, auto trace message receive
+// todo 改写自 ocplugin.NewSubscriberWrapper，因为官方实现中把 "Sub to" 写成了 "Pub to". 等上游修正后， 即可移除
+func subTraceWrapper(t opentracing.Tracer) server.SubscriberWrapper {
+	return func(next server.SubscriberFunc) server.SubscriberFunc {
+		return func(ctx context.Context, msg server.Message) error {
+			name := "Sub to " + msg.Topic()
+			ctx, span, err := ocplugin.StartSpanFromContext(ctx, t, name)
+			if err != nil {
+				return err
+			}
+			defer span.Finish()
+			return next(ctx, msg)
+		}
+	}
+}
+
 // server 端 trace
 func ServerTrace(ctx context.Context, name string) opentracing.Span {
 	md, ok := metadata.FromContext(ctx)
