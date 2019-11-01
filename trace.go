@@ -140,11 +140,19 @@ func normalize(s string) string {
 	return regNum2.ReplaceAllString(s, "/:num/")
 }
 
+var activeCtxKey = "gin_trace_context"
+
 func GinTraceMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		path := normalize(c.Request.URL.EscapedPath())
-		span := ServerTrace(c, "web_api "+path)
+		ctx, span := ClientTrace(c, path)
+		c.Set(activeCtxKey, ctx)
 		defer span.Finish()
 		c.Next()
 	}
+}
+
+// MustGetCtx extracts ctx from gin.Context. It panics if ctx was not set.
+func MustGetCtx(ctx *gin.Context) context.Context {
+	return ctx.MustGet(activeCtxKey).(context.Context)
 }
