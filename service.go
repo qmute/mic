@@ -10,6 +10,7 @@ import (
 	hystrixPlugin "github.com/micro/go-plugins/wrapper/breaker/hystrix"
 	"github.com/micro/go-plugins/wrapper/monitoring/prometheus"
 	limiter "github.com/micro/go-plugins/wrapper/ratelimiter/uber"
+	otplugin "github.com/micro/go-plugins/wrapper/trace/opentracing"
 )
 
 type Opt struct {
@@ -24,10 +25,17 @@ type Opt struct {
 }
 
 func (p Opt) GetLimit() int {
-	if p.Limit > 0 {
-		return p.Limit
+	if p.Limit == 0 {
+		return 5000
 	}
-	return 5000
+	return p.Limit
+}
+
+func (p Opt) GetHystrixTimeout() time.Duration {
+	if p.HystrixTimeout == 0 {
+		return time.Second
+	}
+	return p.HystrixTimeout
 }
 
 // 当地址为空时，不作处理，框架会自动填充随机地址。 主动填空会报错
@@ -64,24 +72,22 @@ func DefaultService(opt Opt) (micro.Service, func(), error) {
 		micro.RegisterInterval(time.Second*10),
 		micro.Name(opt.Name),
 		optionalVersion(opt.Version),
-
-		// server 相关
 		optionalAddress(opt.Addr),
+
+		// server 相关。执行顺序：正序。 先设置先执行
 		micro.WrapHandler(serverTraceWrapper(tracer)),                // server trace
 		micro.WrapHandler(prometheus.NewHandlerWrapper()),            // 监控
 		micro.WrapHandler(limiter.NewHandlerWrapper(opt.GetLimit())), // 限流
 
+		// sub 相关
 		micro.WrapSubscriber(subTraceWrapper(tracer)), // subscribe trace
 
-		// client 相关
-		micro.WrapClient(hystrixPlugin.NewClientWrapper()), // 熔断
-		micro.WrapClient(clientTraceWrapper(tracer)),       // client trace， 包含 mq pub trace
+		// client 相关。执行顺序：倒序。 最后设置的最先执行
+		micro.WrapClient(hystrixPlugin.NewClientWrapper()),  // 熔断
+		micro.WrapClient(otplugin.NewClientWrapper(tracer)), // client trace， 包含 mq pub trace
 	)
 
-	if opt.HystrixTimeout == 0 {
-		opt.HystrixTimeout = time.Second
-	}
-	hystrix.DefaultTimeout = int(opt.HystrixTimeout / time.Millisecond)
+	hystrix.DefaultTimeout = int(opt.GetHystrixTimeout() / time.Millisecond)
 
 	return service, cleanup, nil
 }
