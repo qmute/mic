@@ -15,4 +15,5 @@ install:  `go get gitlab.51baibao.com/server/mic`
     
 change log:
 
-- v0.1 init    
+- v0.1 init  
+- v0.2 gin trace middleware  
