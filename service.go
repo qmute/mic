@@ -53,7 +53,7 @@ func optionalVersion(v string) micro.Option {
 		if v == "" {
 			return
 		}
-		log.Info("version", v)
+		log.Info("version ", v)
 		o.Server.Init(server.Version(v))
 	}
 }
