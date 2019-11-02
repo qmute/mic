@@ -44,17 +44,17 @@ func optionalAddress(addr string) micro.Option {
 		if addr == "" {
 			return
 		}
-		log.Info()
 		o.Server.Init(server.Address(addr))
 	}
 }
 
-func optionalVersion(ver string) micro.Option {
+func optionalVersion(v string) micro.Option {
 	return func(o *micro.Options) {
-		if ver == "" {
+		if v == "" {
 			return
 		}
-		o.Server.Init(server.Version(ver))
+		log.Info("version", v)
+		o.Server.Init(server.Version(v))
 	}
 }
 
