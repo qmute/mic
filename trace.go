@@ -5,14 +5,13 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/micro/go-micro/client"
 	"github.com/micro/go-micro/metadata"
 	"github.com/micro/go-micro/server"
 	"github.com/micro/go-micro/util/log"
-	ocplugin "github.com/micro/go-plugins/wrapper/trace/opentracing"
+	otplugin "github.com/micro/go-plugins/wrapper/trace/opentracing"
 	"github.com/opentracing/opentracing-go"
 	"github.com/uber/jaeger-client-go"
-	jaegercfg "github.com/uber/jaeger-client-go/config"
+	"github.com/uber/jaeger-client-go/config"
 )
 
 type traceOpt struct {
@@ -20,15 +19,15 @@ type traceOpt struct {
 	TracerAddr string // tracer address
 }
 
-// init global tracer
+// init global tracer, 创建并设置全局tracer
 func initGlobalTracer(opt traceOpt) (opentracing.Tracer, func(), error) {
-	cfg := jaegercfg.Configuration{
+	cfg := config.Configuration{
 		ServiceName: opt.Name, // tracer name
-		Sampler: &jaegercfg.SamplerConfig{
+		Sampler: &config.SamplerConfig{
 			Type:  jaeger.SamplerTypeConst,
 			Param: 1,
 		},
-		Reporter: &jaegercfg.ReporterConfig{
+		Reporter: &config.ReporterConfig{
 			LogSpans:            true,
 			BufferFlushInterval: 1 * time.Second,
 		},
@@ -40,7 +39,7 @@ func initGlobalTracer(opt traceOpt) (opentracing.Tracer, func(), error) {
 	reporter := jaeger.NewRemoteReporter(sender) // create Jaeger reporter
 	// Initialize Opentracing tracer with Jaeger Reporter
 	tracer, closer, err := cfg.NewTracer(
-		jaegercfg.Reporter(reporter),
+		config.Reporter(reporter),
 	)
 
 	// 这样就不必四处传递tracer了
@@ -58,7 +57,7 @@ func serverTraceWrapper(t opentracing.Tracer) server.HandlerWrapper {
 	return func(h server.HandlerFunc) server.HandlerFunc {
 		return func(ctx context.Context, req server.Request, rsp interface{}) error {
 			name := fmt.Sprintf("%s.%s", req.Service(), req.Endpoint())
-			ctx, span, err := ocplugin.StartSpanFromContext(ctx, t, name)
+			ctx, span, err := otplugin.StartSpanFromContext(ctx, t, name)
 			if err != nil {
 				return err
 			}
@@ -73,25 +72,24 @@ func serverTraceWrapper(t opentracing.Tracer) server.HandlerWrapper {
 	}
 }
 
-// micro client wrapper, auto trace any call to any remote endpoint
-func clientTraceWrapper(t opentracing.Tracer) client.Wrapper {
-	return ocplugin.NewClientWrapper(t)
-}
-
-// server 端 trace
-func ServerTrace(ctx context.Context, name string) opentracing.Span {
-	md, ok := metadata.FromContext(ctx)
-	if !ok {
-		md = make(map[string]string)
+// subscribe wrapper, auto trace message receive
+// todo 改写自 otplugin.NewSubscriberWrapper，因为官方实现中把 "Sub from" 写成了 "Pub to". 等上游修正后， 即可移除
+func subTraceWrapper(t opentracing.Tracer) server.SubscriberWrapper {
+	return func(next server.SubscriberFunc) server.SubscriberFunc {
+		return func(ctx context.Context, msg server.Message) error {
+			name := "Sub from " + msg.Topic()
+			ctx, span, err := otplugin.StartSpanFromContext(ctx, t, name)
+			if err != nil {
+				return err
+			}
+			defer span.Finish()
+			return next(ctx, msg)
+		}
 	}
-	var sp opentracing.Span
-	wireContext, _ := opentracing.GlobalTracer().Extract(opentracing.TextMap, opentracing.TextMapCarrier(md))
-	sp = opentracing.StartSpan(name, opentracing.ChildOf(wireContext))
-	return sp
 }
 
-// client 端 trace
-func ClientTrace(ctx context.Context, name string) (context.Context, opentracing.Span) {
+// Trace
+func Trace(ctx context.Context, name string) (context.Context, opentracing.Span) {
 	span, ctx := opentracing.StartSpanFromContext(ctx, name)
 	md, ok := metadata.FromContext(ctx)
 	if !ok {
