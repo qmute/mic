@@ -6,6 +6,7 @@ import (
 	"github.com/afex/hystrix-go/hystrix"
 	"github.com/micro/go-micro"
 	"github.com/micro/go-micro/server"
+	"github.com/micro/go-micro/util/log"
 	hystrixPlugin "github.com/micro/go-plugins/wrapper/breaker/hystrix"
 	"github.com/micro/go-plugins/wrapper/monitoring/prometheus"
 	limiter "github.com/micro/go-plugins/wrapper/ratelimiter/uber"
@@ -16,6 +17,7 @@ type Opt struct {
 	TracerAddr string // tracer address
 
 	// optional
+	Version        string        // service version
 	Addr           string        // 监听地址
 	HystrixTimeout time.Duration // 熔断时限, 默认 1s
 	Limit          int           // 限流阈值, 默认 5000 qps
@@ -34,7 +36,17 @@ func optionalAddress(addr string) micro.Option {
 		if addr == "" {
 			return
 		}
+		log.Info()
 		o.Server.Init(server.Address(addr))
+	}
+}
+
+func optionalVersion(ver string) micro.Option {
+	return func(o *micro.Options) {
+		if ver == "" {
+			return
+		}
+		o.Server.Init(server.Version(ver))
 	}
 }
 
@@ -51,6 +63,7 @@ func DefaultService(opt Opt) (micro.Service, func(), error) {
 		micro.RegisterTTL(time.Second*30),
 		micro.RegisterInterval(time.Second*10),
 		micro.Name(opt.Name),
+		optionalVersion(opt.Version),
 
 		// server 相关
 		optionalAddress(opt.Addr),
