@@ -71,6 +71,10 @@ func DefaultService(opt Opt) (micro.Service, func(), error) {
 		micro.RegisterTTL(time.Second*30),
 		micro.RegisterInterval(time.Second*10),
 		micro.Name(opt.Name),
+		micro.AfterStart(func() error {
+			log.Info("service started")
+			return nil
+		}),
 		optionalVersion(opt.Version),
 		optionalAddress(opt.Addr),
 
