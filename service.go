@@ -72,7 +72,7 @@ func DefaultService(opt Opt) (micro.Service, func(), error) {
 		micro.RegisterInterval(time.Second*10),
 		micro.Name(opt.Name),
 		micro.AfterStart(func() error {
-			log.Info("service started")
+			log.Info("Service started")
 			return nil
 		}),
 		optionalVersion(opt.Version),
