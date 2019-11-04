@@ -13,6 +13,6 @@ require (
 	github.com/onsi/ginkgo v1.8.0
 	github.com/onsi/gomega v1.5.0
 	github.com/opentracing/opentracing-go v1.1.0
-	github.com/quexer/go-plugins v1.4.4
+	github.com/quexer/go-plugins v1.4.5
 	github.com/uber/jaeger-client-go v2.19.0+incompatible
 )
