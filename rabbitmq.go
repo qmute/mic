@@ -18,9 +18,11 @@ func RabbitMQDurableQueue(name string) server.SubscriberOption {
 	}
 	fName := server.SubscriberQueue(name)
 	fDurable := rabbitmq.ServerDurableQueue()
+	fAck := rabbitmq.ServerAckOnSuccess()
 	return func(o *server.SubscriberOptions) {
 		fName(o)
 		fDurable(o)
+		fAck(o)
 	}
 
 }
