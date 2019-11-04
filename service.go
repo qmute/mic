@@ -91,6 +91,11 @@ func DefaultService(opt Opt) (micro.Service, func(), error) {
 		micro.WrapClient(otplugin.NewClientWrapper(tracer)), // client trace， 包含 mq pub trace
 	)
 
+	// rpc server: graceful shutdown
+	if err := service.Server().Init(server.Wait(nil)); err != nil {
+		return nil, nil, err
+	}
+
 	hystrix.DefaultTimeout = int(opt.GetHystrixTimeout() / time.Millisecond)
 
 	return service, cleanup, nil
