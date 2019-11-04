@@ -16,15 +16,17 @@ func RabbitMQDurableQueue(name string) server.SubscriberOption {
 	if name == "" {
 		log.Fatal("DurableQueue doesn't work with empty name")
 	}
-	fName := server.SubscriberQueue(name)
-	fDurable := rabbitmq.ServerDurableQueue()
-	fAck := rabbitmq.ServerAckOnSuccess()
+	// 为实现可靠订阅， 以下几项必须同时使用
+	fName := server.SubscriberQueue(name)          // 固定名字
+	fDurable := rabbitmq.ServerDurableQueue()      // 队列持久化
+	fDisableAutoAck := server.DisableAutoAck()     // 禁用自动ack（同时影响mq connection 和 broker 的处理逻辑）
+	fAckOnSuccess := rabbitmq.ServerAckOnSuccess() // 确认成功后才ack
 	return func(o *server.SubscriberOptions) {
 		fName(o)
 		fDurable(o)
-		fAck(o)
+		fDisableAutoAck(o)
+		fAckOnSuccess(o)
 	}
-
 }
 
 // RabbitMQDurableMessageContext
