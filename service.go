@@ -7,10 +7,10 @@ import (
 	"github.com/micro/go-micro"
 	"github.com/micro/go-micro/server"
 	"github.com/micro/go-micro/util/log"
-	hystrixPlugin "github.com/micro/go-plugins/wrapper/breaker/hystrix"
-	"github.com/micro/go-plugins/wrapper/monitoring/prometheus"
-	limiter "github.com/micro/go-plugins/wrapper/ratelimiter/uber"
-	otplugin "github.com/micro/go-plugins/wrapper/trace/opentracing"
+	hystrixPlugin "github.com/quexer/go-plugins/wrapper/breaker/hystrix"
+	"github.com/quexer/go-plugins/wrapper/monitoring/prometheus"
+	limiter "github.com/quexer/go-plugins/wrapper/ratelimiter/uber"
+	otplugin "github.com/quexer/go-plugins/wrapper/trace/opentracing"
 )
 
 type Opt struct {
