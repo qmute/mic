@@ -155,6 +155,16 @@ func DefaultWeb(opt Opt) (web.Service, func(), error) {
 		optionalWebVersion(opt.Version),
 		web.Name(opt.Name),
 		web.MicroService(service),
+		web.BeforeStart(func() error {
+			// 若service不启动， 无法sub
+			// grpc server 无需单独启动。 但 web server 中需要
+			go func() {
+				if err := server.Run(); err != nil {
+					log.Fatal("micro service start fail. can't sub", err)
+				}
+			}()
+			return nil
+		}),
 		web.AfterStart(func() error {
 			log.Info("Service started")
 			return nil

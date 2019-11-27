@@ -8,10 +8,10 @@ import (
 )
 
 var _ = Describe("Service", func() {
-	It("", func(){
+	It("new web", func() {
 		_, cleanup, err := mic.DefaultWeb(mic.Opt{
-			Name:           "foo",
-			TracerAddr:     "bj-etcd-dev-host-001.51baibao.com:6831",
+			Name:       "foo",
+			TracerAddr: "bj-etcd-dev-host-001.51baibao.com:6831",
 		})
 		Expect(err).ShouldNot(HaveOccurred())
 		defer cleanup()
