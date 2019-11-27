@@ -7,6 +7,7 @@ import (
 	"github.com/micro/go-micro"
 	"github.com/micro/go-micro/server"
 	"github.com/micro/go-micro/util/log"
+	"github.com/micro/go-micro/web"
 	hystrixPlugin "github.com/quexer/go-plugins/wrapper/breaker/hystrix"
 	"github.com/quexer/go-plugins/wrapper/monitoring/prometheus"
 	limiter "github.com/quexer/go-plugins/wrapper/ratelimiter/uber"
@@ -58,7 +59,26 @@ func optionalVersion(v string) micro.Option {
 	}
 }
 
-// 创建默认 micro.Service ，适用于绝大多数场景
+func optionalWebAddress(addr string) web.Option {
+	return func(o *web.Options) {
+		if addr == "" {
+			return
+		}
+		o.Address = addr
+	}
+}
+
+func optionalWebVersion(v string) web.Option {
+	return func(o *web.Options) {
+		if v == "" {
+			return
+		}
+		log.Info("Version ", v)
+		o.Version = v
+	}
+}
+
+// 创建默认 micro.Service ，适用于 grpc server 绝大多数场景
 // 如果想覆盖默认行为不够，可以后续在service.Init()中追加（例如version, port）
 func DefaultService(opt Opt) (micro.Service, func(), error) {
 	tracer, cleanup, err := initGlobalTracer(traceOpt{Name: opt.Name, TracerAddr: opt.TracerAddr})
@@ -99,4 +119,46 @@ func DefaultService(opt Opt) (micro.Service, func(), error) {
 	hystrix.DefaultTimeout = int(opt.GetHystrixTimeout() / time.Millisecond)
 
 	return service, cleanup, nil
+}
+
+// 创建默认 micro.Service ，适用于 grpc server 绝大多数场景
+// 如果想覆盖默认行为不够，可以后续在service.Init()中追加
+func DefaultWeb(opt Opt) (web.Service, func(), error) {
+	tracer, cleanup, err := initGlobalTracer(traceOpt{Name: opt.Name, TracerAddr: opt.TracerAddr})
+	if err != nil {
+		return nil, nil, err
+	}
+
+	// 此service 仅用作 client call， 不启动 grpc server
+	service := micro.NewService(
+		// common
+		micro.RegisterTTL(time.Second*30),
+		micro.RegisterInterval(time.Second*10),
+
+		// server 相关。执行顺序：正序。 先设置先执行
+		micro.WrapHandler(prometheus.NewHandlerWrapper()), // 监控
+
+		// sub 相关
+		micro.WrapSubscriber(subTraceWrapper(tracer)), // subscribe trace
+
+		// client 相关。执行顺序：倒序。 最后设置的最先执行
+		micro.WrapClient(hystrixPlugin.NewClientWrapper()),  // 熔断
+		micro.WrapClient(otplugin.NewClientWrapper(tracer)), // client trace， 包含 mq pub trace
+	)
+
+	hystrix.DefaultTimeout = int(opt.GetHystrixTimeout() / time.Millisecond)
+
+	webService := web.NewService(
+		web.RegisterTTL(time.Second*30),
+		web.RegisterInterval(time.Second*10),
+		optionalWebAddress(opt.Addr),
+		optionalWebVersion(opt.Version),
+		web.Name(opt.Name),
+		web.MicroService(service),
+		web.AfterStart(func() error {
+			log.Info("Service started")
+			return nil
+		}),
+	)
+	return webService, cleanup, nil
 }
