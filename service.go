@@ -79,7 +79,7 @@ func optionalWebVersion(v string) web.Option {
 }
 
 // 创建默认 micro.Service ，适用于 grpc server 绝大多数场景
-// 如果想覆盖默认行为不够，可以后续在service.Init()中追加（例如version, port）
+// 如果想覆盖默认行为，可以后续在service.Init()中追加（例如version, addr等）
 func DefaultService(opt Opt) (micro.Service, func(), error) {
 	tracer, cleanup, err := initGlobalTracer(traceOpt{Name: opt.Name, TracerAddr: opt.TracerAddr})
 	if err != nil {
@@ -121,8 +121,8 @@ func DefaultService(opt Opt) (micro.Service, func(), error) {
 	return service, cleanup, nil
 }
 
-// 创建默认 micro.Service ，适用于 grpc server 绝大多数场景
-// 如果想覆盖默认行为不够，可以后续在service.Init()中追加
+// 创建默认 web.Service ，适用于 web server
+// 如果想覆盖默认行为，可以后续在service.Init()中追加（例如version, addr等）
 func DefaultWeb(opt Opt) (web.Service, func(), error) {
 	tracer, cleanup, err := initGlobalTracer(traceOpt{Name: opt.Name, TracerAddr: opt.TracerAddr})
 	if err != nil {
