@@ -134,6 +134,7 @@ func DefaultWeb(opt Opt) (web.Service, func(), error) {
 		// common
 		micro.RegisterTTL(time.Second*30),
 		micro.RegisterInterval(time.Second*10),
+		micro.Name(opt.Name+".internal"), // 明确区分被web组件内置的micro service
 
 		// server 相关。执行顺序：正序。 先设置先执行
 		micro.WrapHandler(prometheus.NewHandlerWrapper()), // 监控
