@@ -129,12 +129,14 @@ func DefaultWeb(opt Opt) (web.Service, func(), error) {
 		return nil, nil, err
 	}
 
+	// todo 重用DefaultService? 仅处理端口就可以吗？？
 	// 此service 仅用作 client call， 不启动 grpc server
 	service := micro.NewService(
 		// common
 		micro.RegisterTTL(time.Second*30),
 		micro.RegisterInterval(time.Second*10),
 		micro.Name(opt.Name+".internal"), // 明确区分被web组件内置的micro service
+		optionalVersion(opt.Version),
 
 		// server 相关。执行顺序：正序。 先设置先执行
 		micro.WrapHandler(prometheus.NewHandlerWrapper()), // 监控
