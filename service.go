@@ -129,6 +129,7 @@ func DefaultWeb(opt Opt) (web.Service, func(), error) {
 		return nil, nil, err
 	}
 
+	// todo 重用DefaultService? 仅处理端口就可以吗？？
 	// 此service 仅用作 client call， 不启动 grpc server
 	service := micro.NewService(
 		// common
