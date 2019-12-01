@@ -1,6 +1,7 @@
 package mic_test
 
 import (
+	"github.com/micro/go-micro"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
@@ -9,11 +10,12 @@ import (
 
 var _ = Describe("Service", func() {
 	It("new web", func() {
-		_, cleanup, err := mic.DefaultWeb(mic.Opt{
-			Name:       "foo",
-			TracerAddr: "bj-etcd-dev-host-001.51baibao.com:6831",
+		s := micro.NewService(micro.Version("abc"), micro.Name("foo"))
+		web := mic.DefaultWeb(mic.WebOpt{
+			Addr:    ":8888",
+			Service: s,
 		})
-		Expect(err).ShouldNot(HaveOccurred())
-		defer cleanup()
+		Expect(web.Options().Name).Should(Equal("foo.web"))
+		Expect(web.Options().Version).Should(Equal("abc"))
 	})
 })

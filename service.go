@@ -54,7 +54,6 @@ func optionalVersion(v string) micro.Option {
 		if v == "" {
 			return
 		}
-		log.Info("Version ", v)
 		o.Server.Init(server.Version(v))
 	}
 }
@@ -73,7 +72,6 @@ func optionalWebVersion(v string) web.Option {
 		if v == "" {
 			return
 		}
-		log.Info("Version ", v)
 		o.Version = v
 	}
 }
@@ -92,7 +90,7 @@ func DefaultService(opt Opt) (micro.Service, func(), error) {
 		micro.RegisterInterval(time.Second*10),
 		micro.Name(opt.Name),
 		micro.AfterStart(func() error {
-			log.Info("Service started")
+			log.Info("service started", opt.Name, opt.Version)
 			return nil
 		}),
 		optionalVersion(opt.Version),
@@ -121,57 +119,24 @@ func DefaultService(opt Opt) (micro.Service, func(), error) {
 	return service, cleanup, nil
 }
 
-// 创建默认 web.Service ，适用于 web server
-// 如果想覆盖默认行为，可以后续在service.Init()中追加（例如version, addr等）
-func DefaultWeb(opt Opt) (web.Service, func(), error) {
-	tracer, cleanup, err := initGlobalTracer(traceOpt{Name: opt.Name, TracerAddr: opt.TracerAddr})
-	if err != nil {
-		return nil, nil, err
-	}
+type WebOpt struct {
+	Addr    string
+	Service micro.Service
+}
 
-	// todo 重用DefaultService? 仅处理端口就可以吗？？
-	// 此service 仅用作 client call， 不启动 grpc server
-	service := micro.NewService(
-		// common
-		micro.RegisterTTL(time.Second*30),
-		micro.RegisterInterval(time.Second*10),
-		micro.Name(opt.Name+".internal"), // 明确区分被web组件内置的micro service
-		optionalVersion(opt.Version),
+// DefaultWeb 用micro.Service创建默认 web.Service ，适用于 web server
+func DefaultWeb(opt WebOpt) web.Service {
+	name := opt.Service.Name() + ".web"
+	version := opt.Service.Server().Options().Version
 
-		// server 相关。执行顺序：正序。 先设置先执行
-		micro.WrapHandler(prometheus.NewHandlerWrapper()), // 监控
-
-		// sub 相关
-		micro.WrapSubscriber(subTraceWrapper(tracer)), // subscribe trace
-
-		// client 相关。执行顺序：倒序。 最后设置的最先执行
-		micro.WrapClient(hystrixPlugin.NewClientWrapper()),  // 熔断
-		micro.WrapClient(otplugin.NewClientWrapper(tracer)), // client trace， 包含 mq pub trace
-	)
-
-	hystrix.DefaultTimeout = int(opt.GetHystrixTimeout() / time.Millisecond)
-
-	webService := web.NewService(
-		web.RegisterTTL(time.Second*30),
-		web.RegisterInterval(time.Second*10),
-		optionalWebAddress(opt.Addr),
-		optionalWebVersion(opt.Version),
-		web.Name(opt.Name),
-		web.MicroService(service),
-		web.BeforeStart(func() error {
-			// 若service不启动， 无法sub
-			// grpc server 无需单独启动。 但 web server 中需要
-			go func() {
-				if err := server.Run(); err != nil {
-					log.Fatal("micro service start fail. can't sub", err)
-				}
-			}()
-			return nil
-		}),
+	return web.NewService(
+		web.Address(opt.Addr),
+		web.MicroService(opt.Service),
+		web.Name(name),
+		web.Version(version),
 		web.AfterStart(func() error {
-			log.Info("Service started")
+			log.Info("web started", name, version)
 			return nil
 		}),
 	)
-	return webService, cleanup, nil
 }
