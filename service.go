@@ -90,7 +90,7 @@ func DefaultService(opt Opt) (micro.Service, func(), error) {
 		micro.RegisterInterval(time.Second*10),
 		micro.Name(opt.Name),
 		micro.AfterStart(func() error {
-			log.Info("service started", opt.Name, opt.Version)
+			log.Infof("service started %s %s %s", opt.Name, opt.Version, opt.Addr)
 			return nil
 		}),
 		optionalVersion(opt.Version),
@@ -135,7 +135,7 @@ func DefaultWeb(opt WebOpt) web.Service {
 		web.Name(name),
 		web.Version(version),
 		web.AfterStart(func() error {
-			log.Info("web started", name, version)
+			log.Infof("web started %s %s %s", name, version, opt.Addr)
 			return nil
 		}),
 	)
