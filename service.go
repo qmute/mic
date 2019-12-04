@@ -1,7 +1,6 @@
 package mic
 
 import (
-	"strings"
 	"time"
 
 	"github.com/afex/hystrix-go/hystrix"
@@ -91,7 +90,7 @@ func DefaultService(opt Opt) (micro.Service, func(), error) {
 		micro.RegisterInterval(time.Second*10),
 		micro.Name(opt.Name),
 		micro.AfterStart(func() error {
-			log.Infof("service started %s %s %s", opt.Name, opt.Version, opt.Addr)
+			log.Infof("Service started %s %s %s", opt.Name, opt.Version, opt.Addr)
 			return nil
 		}),
 		optionalVersion(opt.Version),
@@ -121,24 +120,25 @@ func DefaultService(opt Opt) (micro.Service, func(), error) {
 }
 
 type WebOpt struct {
+	Name    string
 	Addr    string
 	Service micro.Service
 }
 
 // DefaultWeb 用micro.Service创建默认 web.Service ，适用于 web server
 func DefaultWeb(opt WebOpt) web.Service {
-	// internal后缀意味着此grpc server不想暴露给外界, 生成web时应去掉写后缀
-	name := strings.TrimSuffix(opt.Service.Name(), ".internal") + ".web"
-
+	if opt.Name == "" {
+		// 名称不应为空
+		opt.Name = opt.Service.Name() + ".auto_web"
+	}
 	version := opt.Service.Server().Options().Version
-
 	return web.NewService(
 		web.Address(opt.Addr),
 		web.MicroService(opt.Service),
-		web.Name(name),
+		web.Name(opt.Name),
 		web.Version(version),
 		web.AfterStart(func() error {
-			log.Infof("web started %s %s %s", name, version, opt.Addr)
+			log.Infof("Web started %s %s %s", opt.Name, version, opt.Addr)
 			return nil
 		}),
 	)
