@@ -1,6 +1,7 @@
 package mic
 
 import (
+	"strings"
 	"time"
 
 	"github.com/afex/hystrix-go/hystrix"
@@ -126,7 +127,9 @@ type WebOpt struct {
 
 // DefaultWeb 用micro.Service创建默认 web.Service ，适用于 web server
 func DefaultWeb(opt WebOpt) web.Service {
-	name := opt.Service.Name() + ".web"
+	// internal后缀意味着此grpc server不想暴露给外界, 生成web时应去掉写后缀
+	name := strings.TrimSuffix(opt.Service.Name(), ".internal") + ".web"
+
 	version := opt.Service.Server().Options().Version
 
 	return web.NewService(

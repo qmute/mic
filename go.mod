@@ -2,8 +2,6 @@ module gitlab.51baibao.com/server/mic
 
 go 1.13
 
-replace github.com/gogo/protobuf => github.com/gogo/protobuf v1.3.1
-
 replace github.com/uber/jaeger-lib => github.com/uber/jaeger-lib v2.0.0+incompatible
 
 require (
