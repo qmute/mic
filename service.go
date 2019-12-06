@@ -1,6 +1,8 @@
 package mic
 
 import (
+	"context"
+	"fmt"
 	"time"
 
 	"github.com/afex/hystrix-go/hystrix"
@@ -58,21 +60,16 @@ func optionalVersion(v string) micro.Option {
 	}
 }
 
-func optionalWebAddress(addr string) web.Option {
-	return func(o *web.Options) {
-		if addr == "" {
-			return
-		}
-		o.Address = addr
-	}
-}
-
-func optionalWebVersion(v string) web.Option {
-	return func(o *web.Options) {
-		if v == "" {
-			return
-		}
-		o.Version = v
+// recoveryWrapper,  serverWrapper to avoid crash
+func recoveryWrapper(h server.HandlerFunc) server.HandlerFunc {
+	return func(ctx context.Context, req server.Request, rsp interface{}) (err error) {
+		defer func() {
+			if e := recover(); e != nil {
+				log.Errorf("%s.%s panic %v", e, req.Service(), req.Endpoint())
+				err = fmt.Errorf("panic %v", e)
+			}
+		}()
+		return h(ctx, req, rsp)
 	}
 }
 
@@ -97,6 +94,7 @@ func DefaultService(opt Opt) (micro.Service, func(), error) {
 		optionalAddress(opt.Addr),
 
 		// server 相关。执行顺序：正序。 先设置先执行
+		micro.WrapHandler(recoveryWrapper),
 		micro.WrapHandler(serverTraceWrapper(tracer)),                // server trace
 		micro.WrapHandler(prometheus.NewHandlerWrapper()),            // 监控
 		micro.WrapHandler(limiter.NewHandlerWrapper(opt.GetLimit())), // 限流
