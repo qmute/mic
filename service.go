@@ -58,24 +58,6 @@ func optionalVersion(v string) micro.Option {
 	}
 }
 
-func optionalWebAddress(addr string) web.Option {
-	return func(o *web.Options) {
-		if addr == "" {
-			return
-		}
-		o.Address = addr
-	}
-}
-
-func optionalWebVersion(v string) web.Option {
-	return func(o *web.Options) {
-		if v == "" {
-			return
-		}
-		o.Version = v
-	}
-}
-
 // 创建默认 micro.Service ，适用于 grpc server 绝大多数场景
 // 如果想覆盖默认行为，可以后续在service.Init()中追加（例如version, addr等）
 func DefaultService(opt Opt) (micro.Service, func(), error) {
