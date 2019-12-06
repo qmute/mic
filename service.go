@@ -47,7 +47,10 @@ func optionalAddress(addr string) micro.Option {
 		if addr == "" {
 			return
 		}
-		o.Server.Init(server.Address(addr))
+		if err := o.Server.Init(server.Address(addr)); err != nil {
+			log.Fatal(err)
+		}
+
 	}
 }
 
@@ -56,7 +59,9 @@ func optionalVersion(v string) micro.Option {
 		if v == "" {
 			return
 		}
-		o.Server.Init(server.Version(v))
+		if err := o.Server.Init(server.Version(v)); err != nil {
+			log.Fatal(err)
+		}
 	}
 }
 
@@ -65,7 +70,8 @@ func recoveryWrapper(h server.HandlerFunc) server.HandlerFunc {
 	return func(ctx context.Context, req server.Request, rsp interface{}) (err error) {
 		defer func() {
 			if e := recover(); e != nil {
-				log.Errorf("%s.%s panic %v", e, req.Service(), req.Endpoint())
+				// info 是micro默认log级别，高于error， 所以使用info输出
+				log.Infof("panic %s.%s %v", e, req.Service(), req.Endpoint())
 				err = fmt.Errorf("panic %v", e)
 			}
 		}()
