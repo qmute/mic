@@ -83,6 +83,12 @@ func subTraceWrapper(t opentracing.Tracer) server.SubscriberWrapper {
 				return err
 			}
 			defer span.Finish()
+
+			// 监听方法中，在调用service时，解决无反应
+			if md, ok := metadata.FromContext(ctx); ok {
+				delete(md, "Micro-Topic")
+			}
+
 			return next(ctx, msg)
 		}
 	}
