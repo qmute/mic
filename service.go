@@ -71,7 +71,7 @@ func recoveryWrapper(h server.HandlerFunc) server.HandlerFunc {
 		defer func() {
 			if e := recover(); e != nil {
 				// info 是micro默认log级别，高于error， 所以使用info输出
-				log.Infof("panic %s.%s %v", req.Service(), req.Endpoint(), e)
+				log.Infof("panic %s.%s %#v", req.Service(), req.Endpoint(), e)
 				err = fmt.Errorf("panic %v", e)
 			}
 		}()
