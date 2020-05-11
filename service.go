@@ -3,12 +3,14 @@ package mic
 import (
 	"context"
 	"fmt"
+	"runtime/debug"
 	"time"
 
 	"github.com/afex/hystrix-go/hystrix"
 	"github.com/micro/go-micro"
 	"github.com/micro/go-micro/server"
-	"github.com/micro/go-micro/util/log"
+	log "github.com/sirupsen/logrus"
+
 	"github.com/micro/go-micro/web"
 	hystrixPlugin "github.com/quexer/go-plugins/wrapper/breaker/hystrix"
 	"github.com/quexer/go-plugins/wrapper/monitoring/prometheus"
@@ -70,8 +72,8 @@ func recoveryWrapper(h server.HandlerFunc) server.HandlerFunc {
 	return func(ctx context.Context, req server.Request, rsp interface{}) (err error) {
 		defer func() {
 			if e := recover(); e != nil {
-				// info 是micro默认log级别，高于error， 所以使用info输出
-				log.Infof("panic %s.%s %#v", req.Service(), req.Endpoint(), e)
+				log.WithError(err).WithField("stack", string(debug.Stack())).
+					Errorf("panic recovered %s.%s", req.Service(), req.Endpoint())
 				err = fmt.Errorf("panic %v", e)
 			}
 		}()
