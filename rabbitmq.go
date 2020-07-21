@@ -3,8 +3,8 @@ package mic
 import (
 	"log"
 
-	"github.com/micro/go-micro/server"
-	"github.com/quexer/go-plugins/broker/rabbitmq"
+	"github.com/micro/go-micro/v2/server"
+	"github.com/quexer/rmq"
 )
 
 // RabbitMQDurableQueue 开启rabbitMQ的持久化订阅
@@ -18,9 +18,9 @@ func RabbitMQDurableQueue(name string) server.SubscriberOption {
 	}
 	// 为实现可靠订阅， 以下几项必须同时使用
 	fName := server.SubscriberQueue(name)          // 固定名字
-	fDurable := rabbitmq.ServerDurableQueue()      // 队列持久化
+	fDurable := rmq.ServerDurableQueue()      // 队列持久化
 	fDisableAutoAck := server.DisableAutoAck()     // 禁用自动ack（同时影响mq connection 和 broker 的处理逻辑）
-	fAckOnSuccess := rabbitmq.ServerAckOnSuccess() // 确认成功后才ack
+	fAckOnSuccess := rmq.ServerAckOnSuccess() // 确认成功后才ack
 	return func(o *server.SubscriberOptions) {
 		fName(o)
 		fDurable(o)
@@ -35,4 +35,4 @@ func RabbitMQDurableQueue(name string) server.SubscriberOption {
 // Example:
 //	ctx := mic.RabbitMQDurableMessageContext(context.Background())
 //	publisher.Publish(ctx, msg)
-var RabbitMQDurableMessageContext = rabbitmq.DurableMessageContext
+var RabbitMQDurableMessageContext = rmq.DurableMessageContext

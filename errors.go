@@ -1,6 +1,6 @@
 package mic
 
-import "github.com/micro/go-micro/errors"
+import "github.com/micro/go-micro/v2/errors"
 
 // BadRequest generates a 400 error.
 func ErrorBadRequest(id, format string, a ...interface{}) error {

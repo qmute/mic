@@ -7,15 +7,15 @@ import (
 	"time"
 
 	"github.com/afex/hystrix-go/hystrix"
-	"github.com/micro/go-micro"
-	"github.com/micro/go-micro/server"
+	"github.com/micro/go-micro/v2"
+	"github.com/micro/go-micro/v2/server"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/micro/go-micro/web"
-	hystrixPlugin "github.com/quexer/go-plugins/wrapper/breaker/hystrix"
-	"github.com/quexer/go-plugins/wrapper/monitoring/prometheus"
-	limiter "github.com/quexer/go-plugins/wrapper/ratelimiter/uber"
-	otplugin "github.com/quexer/go-plugins/wrapper/trace/opentracing"
+	"github.com/micro/go-micro/v2/web"
+	hystrixPlugin "github.com/micro/go-plugins/wrapper/breaker/hystrix/v2"
+	"github.com/micro/go-plugins/wrapper/monitoring/prometheus/v2"
+	limiter "github.com/micro/go-plugins/wrapper/ratelimiter/uber/v2"
+	otplugin "github.com/micro/go-plugins/wrapper/trace/opentracing/v2"
 )
 
 type Opt struct {

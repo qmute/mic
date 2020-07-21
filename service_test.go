@@ -1,7 +1,7 @@
 package mic_test
 
 import (
-	"github.com/micro/go-micro"
+	"github.com/micro/go-micro/v2"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 

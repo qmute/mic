@@ -15,6 +15,7 @@ install:  `go get gitlab.51baibao.com/server/mic`
     
 change log:
 
-- v0.1 init  
-- v0.2 gin trace middleware
+- v0.7.0 breaking change, upgrade micro to v2.9.1; replace `quexer/go-plugins/broker/rabbitmq` with `quexer/rmq`
 - v0.5.6 support micro.Service / web.Service  
+- v0.2 gin trace middleware
+- v0.1 init  
