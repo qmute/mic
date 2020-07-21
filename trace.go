@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/micro/go-micro/metadata"
-	"github.com/micro/go-micro/server"
-	"github.com/micro/go-micro/util/log"
+	log "github.com/micro/go-micro/v2/logger"
+	"github.com/micro/go-micro/v2/metadata"
+	"github.com/micro/go-micro/v2/server"
+	otplugin "github.com/micro/go-plugins/wrapper/trace/opentracing/v2"
 	"github.com/opentracing/opentracing-go"
-	otplugin "github.com/quexer/go-plugins/wrapper/trace/opentracing"
 	"github.com/uber/jaeger-client-go"
 	"github.com/uber/jaeger-client-go/config"
 )
@@ -83,6 +83,12 @@ func subTraceWrapper(t opentracing.Tracer) server.SubscriberWrapper {
 				return err
 			}
 			defer span.Finish()
+
+			// 监听方法中，在调用service时，解决无反应
+			if md, ok := metadata.FromContext(ctx); ok {
+				delete(md, "Micro-Topic")
+			}
+
 			return next(ctx, msg)
 		}
 	}
