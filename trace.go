@@ -94,7 +94,7 @@ func subTraceWrapper(t opentracing.Tracer) server.SubscriberWrapper {
 	}
 }
 
-// Trace
+// Trace 创建trace所需 context 和  trace span
 func Trace(ctx context.Context, name string) (context.Context, opentracing.Span) {
 	span, ctx := opentracing.StartSpanFromContext(ctx, name)
 	md, ok := metadata.FromContext(ctx)

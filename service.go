@@ -18,6 +18,7 @@ import (
 	otplugin "github.com/micro/go-plugins/wrapper/trace/opentracing/v2"
 )
 
+// Opt grpc server 初始化选项
 type Opt struct {
 	Name       string // name
 	TracerAddr string // tracer address
@@ -29,6 +30,7 @@ type Opt struct {
 	Limit          int           // 限流阈值, 默认 5000 qps
 }
 
+// GetLimit 限流阈值
 func (p Opt) GetLimit() int {
 	if p.Limit == 0 {
 		return 5000
@@ -36,6 +38,7 @@ func (p Opt) GetLimit() int {
 	return p.Limit
 }
 
+// GetHystrixTimeout 获取熔断时限
 func (p Opt) GetHystrixTimeout() time.Duration {
 	if p.HystrixTimeout == 0 {
 		return time.Second
@@ -81,7 +84,7 @@ func recoveryWrapper(h server.HandlerFunc) server.HandlerFunc {
 	}
 }
 
-// 创建默认 micro.Service ，适用于 grpc server 绝大多数场景
+// DefaultService 创建默认 micro.Service ，适用于 grpc server 绝大多数场景
 // 如果想覆盖默认行为，可以后续在service.Init()中追加（例如version, addr等）
 func DefaultService(opt Opt) (micro.Service, func(), error) {
 	tracer, cleanup, err := initGlobalTracer(traceOpt{Name: opt.Name, TracerAddr: opt.TracerAddr})
@@ -125,6 +128,7 @@ func DefaultService(opt Opt) (micro.Service, func(), error) {
 	return service, cleanup, nil
 }
 
+// WebOpt web server 初始化选项
 type WebOpt struct {
 	Name    string
 	Addr    string
