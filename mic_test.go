@@ -7,7 +7,7 @@ import (
 )
 
 var _ = Describe("Mic", func() {
-	It("DefaultConfig", func(){
+	It("DefaultConfig", func() {
 		_, err := DefaultConfig()
 		Expect(err).ShouldNot(HaveOccurred())
 	})
