@@ -4,6 +4,8 @@ go 1.13
 
 replace github.com/uber/jaeger-lib => github.com/uber/jaeger-lib v2.0.0+incompatible
 
+replace github.com/imdario/mergo => github.com/imdario/mergo v0.3.8
+
 require (
 	github.com/afex/hystrix-go v0.0.0-20180502004556-fa1af6a1f4f5
 	github.com/codahale/hdrhistogram v0.0.0-20161010025455-3a0bb77429bd // indirect
