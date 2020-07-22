@@ -8,7 +8,7 @@ import (
 
 var activeCtxKey = "gin_trace_context"
 
-// open trace middleware, 使用全局Tracer
+// GinTraceMiddleware open trace middleware, 使用全局Tracer
 func GinTraceMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, span := Trace(c, c.FullPath())
