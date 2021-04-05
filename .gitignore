@@ -6,9 +6,4 @@ bin
 *.iml
 *.sublime-workspace
 .vscode
-meishi
-meishi.exe
-*.swagger*
-scripts/index.html
-local_test
-usr-srv
+*.coverprofile
