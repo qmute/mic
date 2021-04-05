@@ -2,6 +2,7 @@ package mic
 
 import (
 	"context"
+	"fmt"
 	"sync"
 
 	"github.com/micro/go-micro/v2"
@@ -56,7 +57,7 @@ func (p *MicroEventBus) getPublisher(topic string) micro.Event {
 func (p *MicroEventBus) Sub(topic string, hdl interface{}, queue ...string) error {
 	name := topic
 	if len(queue) > 0 {
-		name += queue[0]
+		name = fmt.Sprintf("%s:%s", topic, queue[0])
 	}
 	return micro.RegisterSubscriber(topic, p.microService.Server(), hdl, RabbitMQDurableQueue(name))
 }
