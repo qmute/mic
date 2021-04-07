@@ -3,6 +3,7 @@ package internal
 import (
 	"context"
 	"fmt"
+	"runtime/debug"
 
 	"github.com/micro/go-micro/v2/server"
 	"github.com/sirupsen/logrus"
@@ -14,8 +15,8 @@ func GrpcRecoveryWrapper(h server.HandlerFunc) server.HandlerFunc {
 		defer func() {
 			if e := recover(); e != nil {
 				err = fmt.Errorf("panic %+v\n", e)
-				logrus.WithError(err).Errorf("panic recovered %s.%s \n %+v\n", req.Service(), req.Endpoint(), err)
-				fmt.Printf("panic %+v\n", e)
+				logrus.WithError(err).WithField("stack", string(debug.Stack())).Errorf("panic recovered %s.%s \n %+v\n", req.Service(), req.Endpoint(), err)
+				fmt.Printf("panic %+v\n%s\n", e, string(debug.Stack()))
 			}
 		}()
 		return h(ctx, req, rsp)
