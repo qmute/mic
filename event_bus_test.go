@@ -7,6 +7,7 @@ import (
 
 	"gitlab.51baibao.com/server/mic"
 	"gitlab.51baibao.com/server/mic/internal/mocks"
+	"gitlab.51baibao.com/server/mic/internal/mocks/mserver"
 )
 
 var _ = Describe("EventBus", func() {
@@ -35,7 +36,7 @@ var _ = Describe("EventBus", func() {
 		Ω(err).NotTo(HaveOccurred())
 	})
 	It("Sub", func() {
-		mServer := mocks.NewMockServer(ctl)
+		mServer := mserver.NewMockServer(ctl)
 		mServer.EXPECT().NewSubscriber("foo", gomock.Any(), gomock.Any()).Return(nil)
 		mServer.EXPECT().Subscribe(nil)
 
