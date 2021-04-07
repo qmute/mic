@@ -3,7 +3,6 @@ package mic
 import (
 	"context"
 	"fmt"
-	"runtime/debug"
 	"time"
 
 	"github.com/afex/hystrix-go/hystrix"
@@ -75,12 +74,24 @@ func recoveryWrapper(h server.HandlerFunc) server.HandlerFunc {
 	return func(ctx context.Context, req server.Request, rsp interface{}) (err error) {
 		defer func() {
 			if e := recover(); e != nil {
-				log.WithError(err).WithField("stack", string(debug.Stack())).
-					Errorf("panic recovered %s.%s", req.Service(), req.Endpoint())
-				err = fmt.Errorf("panic %v", e)
+				log.WithError(err).Errorf("panic recovered %s.%s \n %+v\n", req.Service(), req.Endpoint(), err)
+				fmt.Printf("panic %+v\n", e)
+				err = fmt.Errorf("panic %+v\n", e)
 			}
 		}()
 		return h(ctx, req, rsp)
+	}
+}
+
+// errLogWrapper,  serverWrapper to print err stack
+func errLogWrapper(h server.HandlerFunc) server.HandlerFunc {
+	return func(ctx context.Context, req server.Request, rsp interface{}) error {
+		err := h(ctx, req, rsp)
+		if err != nil {
+			log.WithError(err).Errorf("err %s.%s \n %+v\n", req.Service(), req.Endpoint(), err)
+			fmt.Printf("err %+v\n", err)
+		}
+		return err
 	}
 }
 
@@ -106,6 +117,7 @@ func DefaultService(opt Opt) (micro.Service, func(), error) {
 
 		// server 相关。执行顺序：正序。 先设置先执行
 		micro.WrapHandler(recoveryWrapper),
+		micro.WrapHandler(errLogWrapper),
 		micro.WrapHandler(serverTraceWrapper(tracer)),                // server trace
 		micro.WrapHandler(prometheus.NewHandlerWrapper()),            // 监控
 		micro.WrapHandler(limiter.NewHandlerWrapper(opt.GetLimit())), // 限流
