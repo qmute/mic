@@ -8,8 +8,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// SubPanicWrapper 包装事件订阅，防止panic
-func SubPanicWrapper(next server.SubscriberFunc) server.SubscriberFunc {
+// SubscribePanicWrapper 包装事件订阅，防止panic
+func SubscribePanicWrapper(next server.SubscriberFunc) server.SubscriberFunc {
 	return func(ctx context.Context, msg server.Message) (err error) {
 		defer func() {
 			if e := recover(); e != nil {
@@ -22,8 +22,8 @@ func SubPanicWrapper(next server.SubscriberFunc) server.SubscriberFunc {
 	}
 }
 
-// SubErrLogWrapper 包装事件订阅，出错时打日志(带stack)
-func SubErrLogWrapper(next server.SubscriberFunc) server.SubscriberFunc {
+// SubscribeErrLogWrapper 包装事件订阅，出错时打日志(带stack)
+func SubscribeErrLogWrapper(next server.SubscriberFunc) server.SubscriberFunc {
 	return func(ctx context.Context, msg server.Message) error {
 		err := next(ctx, msg)
 		if err != nil {

@@ -9,7 +9,7 @@ import (
 	. "github.com/onsi/gomega"
 
 	"gitlab.51baibao.com/server/mic/internal"
-	"gitlab.51baibao.com/server/mic/internal/mocks"
+	"gitlab.51baibao.com/server/mic/internal/mocks/mserver"
 )
 
 var _ = Describe("GrpcWrapper", func() {
@@ -19,7 +19,7 @@ var _ = Describe("GrpcWrapper", func() {
 		})
 
 		f := func() {
-			mReq := mocks.NewMockRequest(ctl)
+			mReq := mserver.NewMockRequest(ctl)
 			mReq.EXPECT().Service().Return("foo")
 			mReq.EXPECT().Endpoint().Return("bar")
 			_ = h2(ctx, mReq, nil)
@@ -31,7 +31,7 @@ var _ = Describe("GrpcWrapper", func() {
 			return errors.New("haha")
 		})
 
-		mReq := mocks.NewMockRequest(ctl)
+		mReq := mserver.NewMockRequest(ctl)
 		mReq.EXPECT().Service().Return("foo")
 		mReq.EXPECT().Endpoint().Return("bar")
 		err := h2(ctx, mReq, nil)

@@ -97,9 +97,9 @@ func DefaultService(opt Opt) (micro.Service, func(), error) {
 		micro.WrapHandler(limiter.NewHandlerWrapper(opt.GetLimit())), // 限流
 
 		// sub 相关
-		micro.WrapSubscriber(internal.SubPanicWrapper),  // 防panic
-		micro.WrapSubscriber(internal.SubErrLogWrapper), // 错误日志
-		micro.WrapSubscriber(subTraceWrapper(tracer)),   // subscribe trace
+		micro.WrapSubscriber(internal.SubscribePanicWrapper),  // 防panic
+		micro.WrapSubscriber(internal.SubscribeErrLogWrapper), // 错误日志
+		micro.WrapSubscriber(subTraceWrapper(tracer)),         // subscribe trace
 
 		// client 相关。执行顺序：倒序。 最后设置的最先执行
 		micro.WrapClient(hystrixPlugin.NewClientWrapper()),  // 熔断
