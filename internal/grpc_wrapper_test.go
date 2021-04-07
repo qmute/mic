@@ -14,11 +14,9 @@ import (
 
 var _ = Describe("GrpcWrapper", func() {
 	It("GrpcRecoveryWrapper", func() {
-		h := func(ctx context.Context, req server.Request, rsp interface{}) error {
+		h2 := internal.GrpcRecoveryWrapper(func(ctx context.Context, req server.Request, rsp interface{}) error {
 			panic("foo")
-		}
-
-		h2 := internal.GrpcRecoveryWrapper(h)
+		})
 
 		f := func() {
 			mReq := mocks.NewMockRequest(ctl)
@@ -29,11 +27,9 @@ var _ = Describe("GrpcWrapper", func() {
 		Ω(f).NotTo(Panic())
 	})
 	It("GrpcErrLogWrapper", func() {
-		h := func(ctx context.Context, req server.Request, rsp interface{}) error {
+		h2 := internal.GrpcErrLogWrapper(func(ctx context.Context, req server.Request, rsp interface{}) error {
 			return errors.New("haha")
-		}
-
-		h2 := internal.GrpcErrLogWrapper(h)
+		})
 
 		mReq := mocks.NewMockRequest(ctl)
 		mReq.EXPECT().Service().Return("foo")
