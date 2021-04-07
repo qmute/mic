@@ -3,6 +3,7 @@ package internal
 import (
 	"context"
 	"fmt"
+	"runtime/debug"
 
 	"github.com/micro/go-micro/v2/server"
 	"github.com/sirupsen/logrus"
@@ -13,9 +14,9 @@ func SubscribePanicWrapper(next server.SubscriberFunc) server.SubscriberFunc {
 	return func(ctx context.Context, msg server.Message) (err error) {
 		defer func() {
 			if e := recover(); e != nil {
-				logrus.WithError(err).Errorf("subscribe panic recovered from %s \n %+v\n", msg.Topic(), err)
-				fmt.Printf("panic %+v\n", e)
 				err = fmt.Errorf("panic %+v\n", e)
+				logrus.WithError(err).WithField("stack", string(debug.Stack())).Errorf("subscribe panic recovered from %s \n %+v\n", msg.Topic(), err)
+				fmt.Printf("panic %+v\n%s\n", e, string(debug.Stack()))
 			}
 		}()
 		return next(ctx, msg)
