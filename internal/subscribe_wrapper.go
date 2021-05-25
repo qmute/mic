@@ -15,7 +15,7 @@ func SubscribePanicWrapper(next server.SubscriberFunc) server.SubscriberFunc {
 		defer func() {
 			if e := recover(); e != nil {
 				err = fmt.Errorf("panic %+v\n", e)
-				logrus.WithError(err).WithField("stack", string(debug.Stack())).Errorf("subscribe panic recovered from %s \n %+v\n", msg.Topic(), err)
+				logrus.WithField("stack", string(debug.Stack())).Errorf("subscribe panic recovered from %s \n %+v\n", msg.Topic(), err)
 				fmt.Printf("panic %+v\n%s\n", e, string(debug.Stack()))
 			}
 		}()
@@ -23,13 +23,13 @@ func SubscribePanicWrapper(next server.SubscriberFunc) server.SubscriberFunc {
 	}
 }
 
-// SubscribeErrLogWrapper 包装事件订阅，出错时打日志(带stack)
+// SubscribeErrLogWrapper 包装事件订阅，出错时打panic日志(带stack)
 func SubscribeErrLogWrapper(next server.SubscriberFunc) server.SubscriberFunc {
 	return func(ctx context.Context, msg server.Message) error {
 		err := next(ctx, msg)
 		if err != nil {
-			logrus.WithError(err).Errorf("subscribe err from %s \n %+v\n", msg.Topic(), err)
-			fmt.Printf("%+v\n", err)
+			logrus.WithField("stack", string(debug.Stack())).Errorf("subscribe panic err from %s \n %+v\n", msg.Topic(), err)
+			fmt.Printf("panic %+v\n%s\n", err, string(debug.Stack()))
 		}
 		return err
 	}
