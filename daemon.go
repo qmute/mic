@@ -33,9 +33,13 @@ func InitDaemon(it ...Daemon) error {
 		go func(f func()) {
 			defer func() {
 				if e := recover(); e != nil {
+					err, ok := e.(error)
+					if !ok {
+						err = errors.Errorf("%+v", ok)
+					}
 					stack := string(debug.Stack())
-					log.Fields(map[string]interface{}{"stack": stack}).Log(log.ErrorLevel, "job panic", e)
-					fmt.Printf("job panic %+v\n%s\n", e, stack)
+					log.Fields(map[string]interface{}{"stack": stack}).Logf(log.ErrorLevel, "job panic %+v", err)
+					fmt.Printf("job panic %+v\n%s\n", err, stack)
 				}
 			}()
 			f()
@@ -49,10 +53,30 @@ func InitDaemon(it ...Daemon) error {
 func newCron() *cron.Cron {
 	logger := &daemonLogger{}
 	chain := cron.WithChain(
-		cron.Recover(logger),
+		daemonRecover(logger),
 		cron.DelayIfStillRunning(logger),
 	)
 	return cron.New(cron.WithLogger(logger), chain)
+}
+
+// Recover panics in wrapped jobs and log them with the provided logger.
+func daemonRecover(logger cron.Logger) cron.JobWrapper {
+	return func(j cron.Job) cron.Job {
+		return cron.FuncJob(func() {
+			defer func() {
+				if r := recover(); r != nil {
+					err, ok := r.(error)
+					if !ok {
+						err = errors.Errorf("%+v", ok)
+					}
+					stack := string(debug.Stack())
+					log.Fields(map[string]interface{}{"stack": stack}).Logf(log.ErrorLevel, "job panic %+v", err)
+					fmt.Printf("job panic %+v\n%s\n", err, stack)
+				}
+			}()
+			j.Run()
+		})
+	}
 }
 
 type daemonLogger struct {
