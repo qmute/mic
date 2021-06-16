@@ -1,6 +1,7 @@
 package mic
 
 import (
+	"context"
 	"fmt"
 	"runtime/debug"
 
@@ -13,7 +14,7 @@ import (
 type Daemon interface {
 	// Job 定义job，返回 cron 字符串和执行函数。
 	// 如果cron字符串为空，则由用户自己控制运行频率。 框架只负责新启一个线程把"死循环"运行起来
-	Job() (string, func())
+	Job() (string, func(context.Context) error)
 }
 
 // InitDaemon 初始化传入的 Daemon
@@ -23,14 +24,18 @@ func InitDaemon(it ...Daemon) error {
 		spec, fn := v.Job()
 		// 定义了cron， 则加入执行引擎
 		if spec != "" {
-			if _, err := c.AddFunc(spec, fn); err != nil {
+			if _, err := c.AddFunc(spec, func() {
+				if err := fn(context.Background()); err != nil {
+					log.Logf(log.ErrorLevel, "job panic %+v", err)
+				}
+			}); err != nil {
 				return errors.WithStack(err)
 			}
 			continue
 		}
 
 		// 没有定义cron， 则启动单独线程运行， 并作panic保护
-		go func(f func()) {
+		go func(f func(context.Context) error) {
 			defer func() {
 				if e := recover(); e != nil {
 					err, ok := e.(error)
@@ -42,7 +47,9 @@ func InitDaemon(it ...Daemon) error {
 					fmt.Printf("job panic %+v\n%s\n", err, stack)
 				}
 			}()
-			f()
+			if err := f(context.Background()); err != nil {
+				log.Logf(log.ErrorLevel, "job panic %+v", err)
+			}
 		}(fn)
 	}
 	c.Start()
