@@ -15,7 +15,7 @@ func GrpcRecoveryWrapper(h server.HandlerFunc) server.HandlerFunc {
 		defer func() {
 			if e := recover(); e != nil {
 				err = fmt.Errorf("panic %+v\n", e)
-				logrus.WithError(err).WithField("stack", string(debug.Stack())).Errorf("panic recovered %s.%s \n %+v\n", req.Service(), req.Endpoint(), err)
+				logrus.WithError(err).WithField("stack", string(debug.Stack())).Errorf("rpc panic recovered %s.%s \n %+v\n", req.Service(), req.Endpoint(), err)
 				fmt.Printf("panic %+v\n%s\n", e, string(debug.Stack()))
 			}
 		}()
@@ -28,7 +28,7 @@ func GrpcErrLogWrapper(h server.HandlerFunc) server.HandlerFunc {
 	return func(ctx context.Context, req server.Request, rsp interface{}) error {
 		err := h(ctx, req, rsp)
 		if err != nil {
-			logrus.WithError(err).Errorf("err %s.%s \n %+v\n", req.Service(), req.Endpoint(), err)
+			logrus.WithError(err).Errorf("rpc panic err %s.%s \n %+v\n", req.Service(), req.Endpoint(), err)
 			fmt.Printf("err %+v\n", err)
 		}
 		return err
