@@ -6,6 +6,7 @@ import (
 	"github.com/afex/hystrix-go/hystrix"
 	"github.com/micro/go-micro/v2"
 	"github.com/micro/go-micro/v2/server"
+	"github.com/opentracing/opentracing-go"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/micro/go-micro/v2/web"
@@ -19,10 +20,10 @@ import (
 
 // Opt grpc server 初始化选项
 type Opt struct {
-	Name       string // name
-	TracerAddr string // tracer address
+	Name string // name
 
 	// optional
+	TracerAddr     string        // tracer address
 	Version        string        // service version
 	Addr           string        // 监听地址
 	HystrixTimeout time.Duration // 熔断时限, 默认 1s
@@ -69,12 +70,39 @@ func optionalVersion(v string) micro.Option {
 	}
 }
 
+func optionalServerTrace(tracer opentracing.Tracer) micro.Option {
+	if tracer == nil {
+		return func(o *micro.Options) {}
+	}
+	return micro.WrapHandler(serverTraceWrapper(tracer))
+}
+
+func optionalSubscribeTrace(tracer opentracing.Tracer) micro.Option {
+	if tracer == nil {
+		return func(o *micro.Options) {}
+	}
+	return micro.WrapSubscriber(subTraceWrapper(tracer))
+}
+
+func optionalClientTrace(tracer opentracing.Tracer) micro.Option {
+	if tracer == nil {
+		return func(o *micro.Options) {}
+	}
+	return micro.WrapClient(otplugin.NewClientWrapper(tracer))
+}
+
 // DefaultService 创建默认 micro.Service ，适用于 grpc server 绝大多数场景
 // 如果想覆盖默认行为，可以后续在service.Init()中追加（例如version, addr等）
 func DefaultService(opt Opt) (micro.Service, func(), error) {
-	tracer, cleanup, err := initGlobalTracer(traceOpt{Name: opt.Name, TracerAddr: opt.TracerAddr})
-	if err != nil {
-		return nil, nil, err
+	var tracer opentracing.Tracer
+	cleanup := func() {} // 默认啥也不干
+
+	if opt.TracerAddr != "" {
+		var err error
+		tracer, cleanup, err = initGlobalTracer(traceOpt{Name: opt.Name, TracerAddr: opt.TracerAddr})
+		if err != nil {
+			return nil, nil, err
+		}
 	}
 
 	service := micro.NewService(
@@ -92,18 +120,18 @@ func DefaultService(opt Opt) (micro.Service, func(), error) {
 		// server 相关。执行顺序：正序。 先设置先执行
 		micro.WrapHandler(internal.GrpcRecoveryWrapper),              // 防panic
 		micro.WrapHandler(internal.GrpcErrLogWrapper),                // 错误日志
-		micro.WrapHandler(serverTraceWrapper(tracer)),                // server trace
+		optionalServerTrace(tracer),                                  // server trace
 		micro.WrapHandler(prometheus.NewHandlerWrapper()),            // 监控
 		micro.WrapHandler(limiter.NewHandlerWrapper(opt.GetLimit())), // 限流
 
 		// sub 相关
 		micro.WrapSubscriber(internal.SubscribePanicWrapper),  // 防panic
 		micro.WrapSubscriber(internal.SubscribeErrLogWrapper), // 错误日志
-		micro.WrapSubscriber(subTraceWrapper(tracer)),         // subscribe trace
+		optionalSubscribeTrace(tracer),                        // subscribe trace
 
 		// client 相关。执行顺序：倒序。 最后设置的最先执行
-		micro.WrapClient(hystrixPlugin.NewClientWrapper()),  // 熔断
-		micro.WrapClient(otplugin.NewClientWrapper(tracer)), // client trace， 包含 mq pub trace
+		micro.WrapClient(hystrixPlugin.NewClientWrapper()), // 熔断
+		optionalClientTrace(tracer),                        // client trace， 包含 mq pub trace
 	)
 
 	// rpc server: graceful shutdown
