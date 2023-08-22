@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var activeCtxKey = "gin_trace_context"
+// var activeCtxKey = "gin_trace_context"
 
 // // GinTraceMiddleware open trace middleware, 使用全局Tracer
 // func GinTraceMiddleware() gin.HandlerFunc {
@@ -20,5 +20,6 @@ var activeCtxKey = "gin_trace_context"
 
 // MustGetCtx extracts ctx（with trace span） from gin.Context. It panics if ctx was not set.
 func MustGetCtx(c *gin.Context) context.Context {
-	return c.MustGet(activeCtxKey).(context.Context)
+	// return c.MustGet(activeCtxKey).(context.Context)
+	return c
 }
