@@ -5,9 +5,10 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	"gitlab.51baibao.com/server/mic"
-	"gitlab.51baibao.com/server/mic/internal/mocks"
-	"gitlab.51baibao.com/server/mic/internal/mocks/mserver"
+	"gitlab.51baibao.com/server/mic/v4/internal/mocks"
+	"gitlab.51baibao.com/server/mic/v4/internal/mocks/mserver"
+
+	"gitlab.51baibao.com/server/mic/v4"
 )
 
 var _ = Describe("EventBus", func() {

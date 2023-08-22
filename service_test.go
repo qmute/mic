@@ -1,11 +1,11 @@
 package mic_test
 
 import (
-	"github.com/micro/go-micro/v2"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	"go-micro.dev/v4"
 
-	"gitlab.51baibao.com/server/mic"
+	"gitlab.51baibao.com/server/mic/v4"
 )
 
 var _ = Describe("Service", func() {

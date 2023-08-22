@@ -1,8 +1,8 @@
 package mic
 
 import (
-	"github.com/micro/go-micro/v2/config"
-	"github.com/micro/go-micro/v2/config/source/env"
+	"go-micro.dev/v4/config"
+	"go-micro.dev/v4/config/source/env"
 )
 
 // 针对go-micro 框架的工具库和进一步封装， 降低使用门槛和学习成本

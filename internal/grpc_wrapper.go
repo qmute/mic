@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"runtime/debug"
 
-	"github.com/micro/go-micro/v2/server"
 	"github.com/sirupsen/logrus"
+	"go-micro.dev/v4/server"
 
 	"gitlab.51baibao.com/server/mic/ut"
 )

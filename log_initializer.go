@@ -2,11 +2,12 @@ package mic
 
 import (
 	"context"
+	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/micro/go-micro/v2/logger"
-	logPlugin "github.com/micro/go-plugins/logger/logrus/v2"
+	logPlugin "github.com/go-micro/plugins/v4/logger/logrus"
 	"github.com/sirupsen/logrus"
+	"go-micro.dev/v4/logger"
 )
 
 // LogInitializer 日志初始化器
@@ -28,7 +29,9 @@ func (p *LogInitializer) Initialize(ctx context.Context) error {
 	} else {
 		logrus.SetFormatter(&logrus.JSONFormatter{TimestampFormat: tsFmt})
 	}
+	// l := logrus.New() // *logrus.Logger
 
+	logger.DefaultLogger = logPlugin.NewLogger(logger.WithOutput(os.Stdout))
 	logger.DefaultLogger = logPlugin.NewLogger(logPlugin.WithLogger(logrus.StandardLogger()))
 	return nil
 }

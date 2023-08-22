@@ -3,8 +3,8 @@ package mic
 import (
 	"context"
 
-	"github.com/micro/go-micro/v2/logger"
 	"github.com/pkg/errors"
+	"go-micro.dev/v4/logger"
 )
 
 // Initializer 初始化器

@@ -4,18 +4,16 @@ import (
 	"time"
 
 	"github.com/afex/hystrix-go/hystrix"
-	"github.com/micro/go-micro/v2"
-	"github.com/micro/go-micro/v2/server"
-	"github.com/opentracing/opentracing-go"
 	log "github.com/sirupsen/logrus"
+	"go-micro.dev/v4"
+	"go-micro.dev/v4/server"
 
-	"github.com/micro/go-micro/v2/web"
-	hystrixPlugin "github.com/micro/go-plugins/wrapper/breaker/hystrix/v2"
-	"github.com/micro/go-plugins/wrapper/monitoring/prometheus/v2"
-	limiter "github.com/micro/go-plugins/wrapper/ratelimiter/uber/v2"
-	otplugin "github.com/micro/go-plugins/wrapper/trace/opentracing/v2"
+	hystrixPlugin "github.com/go-micro/plugins/v4/wrapper/breaker/hystrix"
+	"github.com/go-micro/plugins/v4/wrapper/monitoring/prometheus"
+	limiter "github.com/go-micro/plugins/v4/wrapper/ratelimiter/uber"
+	"go-micro.dev/v4/web"
 
-	"gitlab.51baibao.com/server/mic/internal"
+	"gitlab.51baibao.com/server/mic/v4/internal"
 )
 
 // Opt grpc server 初始化选项
@@ -70,40 +68,40 @@ func optionalVersion(v string) micro.Option {
 	}
 }
 
-func optionalServerTrace(tracer opentracing.Tracer) micro.Option {
-	if tracer == nil {
-		return func(o *micro.Options) {}
-	}
-	return micro.WrapHandler(serverTraceWrapper(tracer))
-}
-
-func optionalSubscribeTrace(tracer opentracing.Tracer) micro.Option {
-	if tracer == nil {
-		return func(o *micro.Options) {}
-	}
-	return micro.WrapSubscriber(subTraceWrapper(tracer))
-}
-
-func optionalClientTrace(tracer opentracing.Tracer) micro.Option {
-	if tracer == nil {
-		return func(o *micro.Options) {}
-	}
-	return micro.WrapClient(otplugin.NewClientWrapper(tracer))
-}
+// func optionalServerTrace(tracer opentracing.Tracer) micro.Option {
+// 	if tracer == nil {
+// 		return func(o *micro.Options) {}
+// 	}
+// 	return micro.WrapHandler(otplugin.NewHandlerWrapper(tracer))
+// }
+//
+// func optionalSubscribeTrace(tracer opentracing.Tracer) micro.Option {
+// 	if tracer == nil {
+// 		return func(o *micro.Options) {}
+// 	}
+// 	return micro.WrapSubscriber(otplugin.NewSubscriberWrapper(tracer))
+// }
+//
+// func optionalClientTrace(tracer opentracing.Tracer) micro.Option {
+// 	if tracer == nil {
+// 		return func(o *micro.Options) {}
+// 	}
+// 	return micro.WrapClient(otplugin.NewClientWrapper(tracer))
+// }
 
 // DefaultService 创建默认 micro.Service ，适用于 grpc server 绝大多数场景
 // 如果想覆盖默认行为，可以后续在service.Init()中追加（例如version, addr等）
 func DefaultService(opt Opt) (micro.Service, func(), error) {
-	var tracer opentracing.Tracer
+	// var tracer opentracing.Tracer
 	cleanup := func() {} // 默认啥也不干
-
-	if opt.TracerAddr != "" {
-		var err error
-		tracer, cleanup, err = initGlobalTracer(traceOpt{Name: opt.Name, TracerAddr: opt.TracerAddr})
-		if err != nil {
-			return nil, nil, err
-		}
-	}
+	//
+	// if opt.TracerAddr != "" {
+	// 	var err error
+	// 	tracer, cleanup, err = initGlobalTracer(traceOpt{Name: opt.Name, TracerAddr: opt.TracerAddr})
+	// 	if err != nil {
+	// 		return nil, nil, err
+	// 	}
+	// }
 
 	service := micro.NewService(
 		// common
@@ -118,20 +116,20 @@ func DefaultService(opt Opt) (micro.Service, func(), error) {
 		optionalAddress(opt.Addr),
 
 		// server 相关。执行顺序：正序。 先设置先执行
-		micro.WrapHandler(internal.GrpcRecoveryWrapper),              // 防panic
-		micro.WrapHandler(internal.GrpcErrLogWrapper),                // 错误日志
-		optionalServerTrace(tracer),                                  // server trace
+		micro.WrapHandler(internal.GrpcRecoveryWrapper), // 防panic
+		micro.WrapHandler(internal.GrpcErrLogWrapper),   // 错误日志
+		// optionalServerTrace(tracer),                                  // server trace
 		micro.WrapHandler(prometheus.NewHandlerWrapper()),            // 监控
 		micro.WrapHandler(limiter.NewHandlerWrapper(opt.GetLimit())), // 限流
 
 		// sub 相关
 		micro.WrapSubscriber(internal.SubscribePanicWrapper),  // 防panic
 		micro.WrapSubscriber(internal.SubscribeErrLogWrapper), // 错误日志
-		optionalSubscribeTrace(tracer),                        // subscribe trace
+		// optionalSubscribeTrace(tracer),                        // subscribe trace
 
 		// client 相关。执行顺序：倒序。 最后设置的最先执行
 		micro.WrapClient(hystrixPlugin.NewClientWrapper()), // 熔断
-		optionalClientTrace(tracer),                        // client trace， 包含 mq pub trace
+		// optionalClientTrace(tracer),                        // client trace， 包含 mq pub trace
 	)
 
 	// rpc server: graceful shutdown

@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"runtime/debug"
 
-	"github.com/micro/go-micro/v2/server"
 	"github.com/sirupsen/logrus"
+	"go-micro.dev/v4/server"
 )
 
 // SubscribePanicWrapper 包装事件订阅，防止panic

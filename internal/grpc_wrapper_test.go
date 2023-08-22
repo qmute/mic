@@ -4,12 +4,12 @@ import (
 	"context"
 	"errors"
 
-	"github.com/micro/go-micro/v2/server"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	"go-micro.dev/v4/server"
 
-	"gitlab.51baibao.com/server/mic/internal"
-	"gitlab.51baibao.com/server/mic/internal/mocks/mserver"
+	"gitlab.51baibao.com/server/mic/v4/internal"
+	"gitlab.51baibao.com/server/mic/v4/internal/mocks/mserver"
 )
 
 var _ = Describe("GrpcWrapper", func() {

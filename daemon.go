@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"runtime/debug"
 
-	log "github.com/micro/go-micro/v2/logger"
 	"github.com/pkg/errors"
 	"github.com/robfig/cron/v3"
+	log "go-micro.dev/v4/logger"
 )
 
 // Daemon Daemon接口

@@ -3,7 +3,8 @@ package mic_test
 import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	. "gitlab.51baibao.com/server/mic"
+
+	. "gitlab.51baibao.com/server/mic/v4"
 )
 
 var _ = Describe("Mic", func() {
