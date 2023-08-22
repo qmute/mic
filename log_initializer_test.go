@@ -11,12 +11,12 @@ import (
 var _ = Describe("LogInitializer", func() {
 	It("debug", func() {
 		gin.SetMode(gin.DebugMode)
-		_ = (&mic.LogInitializer{}).Initialize(ctx)
+		mic.InitLogger()
 		logger.Info("debug")
 	})
 	It("prod", func() {
 		gin.SetMode(gin.ReleaseMode)
-		_ = (&mic.LogInitializer{}).Initialize(ctx)
+		mic.InitLogger()
 		logger.Info("release")
 	})
 })
