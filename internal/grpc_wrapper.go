@@ -8,7 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"go-micro.dev/v4/server"
 
-	"gitlab.51baibao.com/server/mic/ut"
+	"gitlab.51baibao.com/server/mic/v4/ut"
 )
 
 // GrpcRecoveryWrapper,  serverWrapper to avoid crash
