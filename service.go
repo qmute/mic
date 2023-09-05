@@ -4,10 +4,12 @@ import (
 	"time"
 
 	"github.com/afex/hystrix-go/hystrix"
-	log "github.com/sirupsen/logrus"
 	"go-micro.dev/v4"
+	log "go-micro.dev/v4/logger"
 	"go-micro.dev/v4/server"
 
+	grpcClient "github.com/go-micro/plugins/v4/client/grpc"
+	grpcServer "github.com/go-micro/plugins/v4/server/grpc"
 	hystrixPlugin "github.com/go-micro/plugins/v4/wrapper/breaker/hystrix"
 	"github.com/go-micro/plugins/v4/wrapper/monitoring/prometheus"
 	limiter "github.com/go-micro/plugins/v4/wrapper/ratelimiter/uber"
@@ -104,6 +106,8 @@ func DefaultService(opt Opt) (micro.Service, func(), error) {
 	// }
 
 	service := micro.NewService(
+		micro.Server(grpcServer.NewServer()),
+		micro.Client(grpcClient.NewClient()),
 		// common
 		micro.RegisterTTL(time.Second*30),
 		micro.RegisterInterval(time.Second*10),
