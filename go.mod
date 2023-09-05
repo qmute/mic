@@ -15,10 +15,10 @@ require (
 	github.com/onsi/ginkgo/v2 v2.12.0
 	github.com/onsi/gomega v1.27.10
 	github.com/pkg/errors v0.9.1
-	github.com/quexer/rmq/v4 v4.0.1
+	github.com/quexer/rmq/v4 v4.0.2
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/sirupsen/logrus v1.9.3
-	go-micro.dev/v4 v4.9.0
+	go-micro.dev/v4 v4.10.2
 )
 
 require (
