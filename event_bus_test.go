@@ -1,9 +1,9 @@
 package mic_test
 
 import (
-	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	"go.uber.org/mock/gomock"
 
 	"gitlab.51baibao.com/server/mic/v4/internal/mocks"
 	"gitlab.51baibao.com/server/mic/v4/internal/mocks/mserver"

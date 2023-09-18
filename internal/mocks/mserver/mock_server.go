@@ -7,9 +7,9 @@ package mserver
 import (
 	reflect "reflect"
 
-	gomock "github.com/golang/mock/gomock"
 	codec "go-micro.dev/v4/codec"
 	server "go-micro.dev/v4/server"
+	gomock "go.uber.org/mock/gomock"
 )
 
 // MockServer is a mock of Server interface.

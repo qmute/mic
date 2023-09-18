@@ -7,10 +7,10 @@ package mocks
 import (
 	reflect "reflect"
 
-	gomock "github.com/golang/mock/gomock"
 	micro "go-micro.dev/v4"
 	client "go-micro.dev/v4/client"
 	server "go-micro.dev/v4/server"
+	gomock "go.uber.org/mock/gomock"
 )
 
 // MockService is a mock of Service interface.

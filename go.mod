@@ -11,7 +11,6 @@ require (
 	github.com/go-micro/plugins/v4/wrapper/breaker/hystrix v1.2.0
 	github.com/go-micro/plugins/v4/wrapper/monitoring/prometheus v1.2.0
 	github.com/go-micro/plugins/v4/wrapper/ratelimiter/uber v1.2.0
-	github.com/golang/mock v1.6.0
 	github.com/onsi/ginkgo/v2 v2.12.0
 	github.com/onsi/gomega v1.27.10
 	github.com/pkg/errors v0.9.1
@@ -19,6 +18,7 @@ require (
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/sirupsen/logrus v1.9.3
 	go-micro.dev/v4 v4.10.2
+	go.uber.org/mock v0.3.0
 )
 
 require (

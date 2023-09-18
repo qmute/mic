@@ -120,14 +120,12 @@ func DefaultService(opt Opt) (micro.Service, func(), error) {
 		optionalAddress(opt.Addr),
 
 		// server 相关。执行顺序：正序。 先设置先执行
-		micro.WrapHandler(internal.GrpcRecoveryWrapper), // 防panic
-		micro.WrapHandler(internal.GrpcErrLogWrapper),   // 错误日志
+		micro.WrapHandler(internal.GrpcErrLogWrapper), // 错误日志
 		// optionalServerTrace(tracer),                                  // server trace
 		micro.WrapHandler(prometheus.NewHandlerWrapper()),            // 监控
 		micro.WrapHandler(limiter.NewHandlerWrapper(opt.GetLimit())), // 限流
 
 		// sub 相关
-		micro.WrapSubscriber(internal.SubscribePanicWrapper),  // 防panic
 		micro.WrapSubscriber(internal.SubscribeErrLogWrapper), // 错误日志
 		// optionalSubscribeTrace(tracer),                        // subscribe trace
 
