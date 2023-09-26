@@ -1,6 +1,7 @@
 
 .PHONY: fmt
 fmt:
+	go mod tidy
 	go fmt ./...
 
 .PHONY: mock

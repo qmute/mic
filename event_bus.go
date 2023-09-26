@@ -38,8 +38,7 @@ func NewMicroEventBus(service micro.Service) *MicroEventBus {
 // Pub 发布消息
 func (p *MicroEventBus) Pub(ctx context.Context, topic string, msg interface{}) error {
 	// 目前的应用场景全是持久化的。  若以后遇到其它情况，到时再扩展接口
-	// return p.getPublisher(topic).Publish(RabbitMQDurableMessageContext(ctx), msg)
-	return p.getPublisher(topic).Publish(ctx, msg)
+	return p.getPublisher(topic).Publish(RabbitMQDurableMessageContext(ctx), msg)
 }
 
 func (p *MicroEventBus) getPublisher(topic string) micro.Event {
