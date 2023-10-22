@@ -5,16 +5,19 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/quexer/rmq/v4"
 	"go-micro.dev/v4"
 )
 
-// EventPub事件发布接口
+// EventPub 事件发布接口
 type EventPub interface {
+	// Pub 发布消息
 	Pub(ctx context.Context, topic string, msg interface{}) error
 }
 
 // EventSub 事件订阅接口
 type EventSub interface {
+	// Sub 订阅消息
 	// queue，可选的 订阅队列名称。
 	// 当不同业务方订阅同一个topic时，需要各自指定不同队列名
 	Sub(topic string, msg interface{}, queue ...string) error
@@ -38,7 +41,7 @@ func NewMicroEventBus(service micro.Service) *MicroEventBus {
 // Pub 发布消息
 func (p *MicroEventBus) Pub(ctx context.Context, topic string, msg interface{}) error {
 	// 目前的应用场景全是持久化的。  若以后遇到其它情况，到时再扩展接口
-	return p.getPublisher(topic).Publish(RabbitMQDurableMessageContext(ctx), msg)
+	return p.getPublisher(topic).Publish(ctx, msg, rmq.PublishDeliveryMode(2))
 }
 
 func (p *MicroEventBus) getPublisher(topic string) micro.Event {

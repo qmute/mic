@@ -28,11 +28,3 @@ func RabbitMQDurableQueue(name string) server.SubscriberOption {
 		fAckOnSuccess(o)
 	}
 }
-
-// RabbitMQDurableMessageContext 发布消息时使用此context， 可以确保消费是持久化的
-//
-// Example:
-//
-//	ctx := mic.RabbitMQDurableMessageContext(context.Background())
-//	publisher.Publish(ctx, msg)
-var RabbitMQDurableMessageContext = rmq.DurableMessageContext
