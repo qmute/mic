@@ -24,7 +24,7 @@ var _ = Describe("EventBus", func() {
 		mMsg := mocks.NewMockMessage(ctl)
 
 		mClient := mocks.NewMockClient(ctl)
-		mClient.EXPECT().Publish(gomock.Any(), mMsg).Times(2)
+		mClient.EXPECT().Publish(gomock.Any(), mMsg, gomock.Any()).Times(2)
 		mClient.EXPECT().NewMessage("foo", "msg").Times(2).Return(mMsg)
 
 		mService.EXPECT().Client().Return(mClient)
