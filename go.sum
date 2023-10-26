@@ -317,8 +317,8 @@ github.com/prometheus/procfs v0.11.1 h1:xRC8Iq1yyca5ypa9n1EZnWZkt7dwcoRPQwX/5gwa
 github.com/prometheus/procfs v0.11.1/go.mod h1:eesXgaPo1q7lBpVMoMy0ZOFTth9hBn4W/y0/p/ScXhY=
 github.com/quexer/rmq/v4 v4.0.3 h1:V3g2rQeOhuGOCbHITIhbEmEdwAGxz+uP/m/5HDtGcHg=
 github.com/quexer/rmq/v4 v4.0.3/go.mod h1:c9J3ZDQt6HO9seJxPN82n9TANuRZT3uoZ4pQLUS3oDA=
-github.com/quexer/syncr v0.0.0-20231026094821-7fca59777155 h1:jSnh952IAQ6YgNYceW+ds1KvBaJNL7XT6T6kY/JE8NA=
-github.com/quexer/syncr v0.0.0-20231026094821-7fca59777155/go.mod h1:gcm/DZln0JJAom4ETEUWlZaP0Yk/eAmW1uP48U+nXIM=
+github.com/quexer/syncr v0.0.0-20231026111852-7b4164d18086 h1:yG8w441Mcge4CibBoH53W9z1Or0/XG8KhjN5Y7BwKu4=
+github.com/quexer/syncr v0.0.0-20231026111852-7b4164d18086/go.mod h1:gcm/DZln0JJAom4ETEUWlZaP0Yk/eAmW1uP48U+nXIM=
 github.com/robfig/cron/v3 v3.0.1 h1:WdRxkvbJztn8LMz/QEvLN5sBU+xKpSqwwUO1Pjr4qDs=
 github.com/robfig/cron/v3 v3.0.1/go.mod h1:eQICP3HwyT7UooqI/z+Ov+PtYAWygg1TEWWzGIFLtro=
 github.com/rogpeppe/go-internal v1.11.0 h1:cWPaGQEPrBb5/AsnsZesgZZ9yb1OQ+GOISoDNXVBh4M=

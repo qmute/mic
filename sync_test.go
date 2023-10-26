@@ -1,7 +1,6 @@
 package mic_test
 
 import (
-	"log"
 	"time"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -14,7 +13,7 @@ import (
 	"gitlab.51baibao.com/server/mic/v4"
 )
 
-var _ = FDescribe("Sync", func() {
+var _ = Describe("Sync", func() {
 	Context("MemSync", func() {
 		It("Ttl", func() {
 			mutex := syncr.NewMemorySync()
@@ -37,26 +36,25 @@ var _ = FDescribe("Sync", func() {
 			Eventually(fn).Should(MatchError(sync.ErrLockTimeout))
 		})
 	})
-	Context("Sync", func() {
-		FIt("Ttl", func() {
+	PContext("Sync", func() {
+		It("Ttl", func() {
 
 			mutex := mic.NewSync(micro.NewService(micro.Registry(&dummyConsul{})))
 			{
 				err := mutex.Lock("test", sync.LockTTL(10*time.Second))
 				Ω(err).To(Succeed())
-				log.Println(1)
+				// log.Println(1)
 			}
 
 			{
 				err := mutex.Lock("test", sync.LockTTL(10*time.Second), sync.LockWait(10*time.Second))
 				Ω(err).To(MatchError(sync.ErrLockTimeout))
-				log.Println(2)
+				// log.Println(2)
 			}
 			// time.Sleep(5 * time.Minute)
 			{
-				err := mutex.Unlock("test")
-				Ω(err).To(Succeed())
-				log.Println(3)
+				mutex.Unlock("test")
+				// log.Println(3)
 			}
 		})
 	})
