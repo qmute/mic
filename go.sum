@@ -105,10 +105,6 @@ github.com/go-micro/plugins/v4/logger/logrus v1.2.0 h1:S/SeMbObrPKm6Ad0GOhjQCWo+
 github.com/go-micro/plugins/v4/logger/logrus v1.2.0/go.mod h1:0BDXAwSJrj2HBlRKdamo4YBB1aLMr29opain8RNhN90=
 github.com/go-micro/plugins/v4/server/grpc v1.2.0 h1:lXfM+/0oE/u1g0hVBYsvbP4lYOYXYOmwf5qH7ghi7Cc=
 github.com/go-micro/plugins/v4/server/grpc v1.2.0/go.mod h1:+Ah9Pf/vMSXxBM3fup/hc3N+zN2as3nIpcRaR4sBjnY=
-github.com/go-micro/plugins/v4/sync/consul v1.2.0 h1:+XQyTVINu4qekoWzLxXVHbZwUNr1VTsoN4wwxaGYq+w=
-github.com/go-micro/plugins/v4/sync/consul v1.2.0/go.mod h1:pHdJNg5t32TG7Rf8Ex+LgpUYBIozcbmN2J2IQfAJPQc=
-github.com/go-micro/plugins/v4/sync/memory v1.2.0 h1:ZuytNL1Roz+a07jLMiEvcZIL+pYa2shNX1lF9pa4A44=
-github.com/go-micro/plugins/v4/sync/memory v1.2.0/go.mod h1:zWwIaChf/ehPEBaXzQNLqE4H5N06Q79maoKNaSVOEN4=
 github.com/go-micro/plugins/v4/transport/grpc v1.1.0 h1:mXfDYfFQLnVDzjGY3o84oe4prfux9h8txsnA19dKsj8=
 github.com/go-micro/plugins/v4/transport/grpc v1.1.0/go.mod h1:J5xMp70xXZzm8yafICrDrWaUDd8Gwy8vt0xif7NcOPg=
 github.com/go-micro/plugins/v4/wrapper/breaker/hystrix v1.2.0 h1:0GYwyoHJ3kfJHYEuzSUH+033Kg924Y6aBSJYbpHAKNg=
@@ -321,6 +317,8 @@ github.com/prometheus/procfs v0.11.1 h1:xRC8Iq1yyca5ypa9n1EZnWZkt7dwcoRPQwX/5gwa
 github.com/prometheus/procfs v0.11.1/go.mod h1:eesXgaPo1q7lBpVMoMy0ZOFTth9hBn4W/y0/p/ScXhY=
 github.com/quexer/rmq/v4 v4.0.3 h1:V3g2rQeOhuGOCbHITIhbEmEdwAGxz+uP/m/5HDtGcHg=
 github.com/quexer/rmq/v4 v4.0.3/go.mod h1:c9J3ZDQt6HO9seJxPN82n9TANuRZT3uoZ4pQLUS3oDA=
+github.com/quexer/syncr v0.0.0-20231026094821-7fca59777155 h1:jSnh952IAQ6YgNYceW+ds1KvBaJNL7XT6T6kY/JE8NA=
+github.com/quexer/syncr v0.0.0-20231026094821-7fca59777155/go.mod h1:gcm/DZln0JJAom4ETEUWlZaP0Yk/eAmW1uP48U+nXIM=
 github.com/robfig/cron/v3 v3.0.1 h1:WdRxkvbJztn8LMz/QEvLN5sBU+xKpSqwwUO1Pjr4qDs=
 github.com/robfig/cron/v3 v3.0.1/go.mod h1:eQICP3HwyT7UooqI/z+Ov+PtYAWygg1TEWWzGIFLtro=
 github.com/rogpeppe/go-internal v1.11.0 h1:cWPaGQEPrBb5/AsnsZesgZZ9yb1OQ+GOISoDNXVBh4M=

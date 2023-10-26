@@ -1,6 +1,6 @@
 module gitlab.51baibao.com/server/mic/v4
 
-go 1.21
+go 1.21.3
 
 require (
 	github.com/afex/hystrix-go v0.0.0-20180502004556-fa1af6a1f4f5
@@ -8,8 +8,6 @@ require (
 	github.com/go-micro/plugins/v4/client/grpc v1.2.1
 	github.com/go-micro/plugins/v4/logger/logrus v1.2.0
 	github.com/go-micro/plugins/v4/server/grpc v1.2.0
-	github.com/go-micro/plugins/v4/sync/consul v1.2.0
-	github.com/go-micro/plugins/v4/sync/memory v1.2.0
 	github.com/go-micro/plugins/v4/wrapper/breaker/hystrix v1.2.0
 	github.com/go-micro/plugins/v4/wrapper/monitoring/prometheus v1.2.0
 	github.com/go-micro/plugins/v4/wrapper/ratelimiter/uber v1.2.0
@@ -17,6 +15,7 @@ require (
 	github.com/onsi/gomega v1.28.1
 	github.com/pkg/errors v0.9.1
 	github.com/quexer/rmq/v4 v4.0.3
+	github.com/quexer/syncr v0.0.0-20231026094821-7fca59777155
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/sirupsen/logrus v1.9.3
 	go-micro.dev/v4 v4.10.2
