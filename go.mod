@@ -12,10 +12,10 @@ require (
 	github.com/go-micro/plugins/v4/wrapper/monitoring/prometheus v1.2.0
 	github.com/go-micro/plugins/v4/wrapper/ratelimiter/uber v1.2.0
 	github.com/onsi/ginkgo/v2 v2.13.0
-	github.com/onsi/gomega v1.28.1
+	github.com/onsi/gomega v1.29.0
 	github.com/pkg/errors v0.9.1
 	github.com/quexer/rmq/v4 v4.0.3
-	github.com/quexer/syncr v0.0.0-20231027051100-dbd1ec0ac73d
+	github.com/quexer/syncr v0.0.0-20231027072233-6a5824425470
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/sirupsen/logrus v1.9.3
 	go-micro.dev/v4 v4.10.2
