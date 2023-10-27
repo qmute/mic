@@ -2,6 +2,7 @@ package mic
 
 import (
 	"log"
+	"time"
 
 	"go-micro.dev/v4/logger"
 	"go-micro.dev/v4/registry"
@@ -9,6 +10,25 @@ import (
 
 	"github.com/quexer/syncr"
 )
+
+type LockOptions struct {
+	wait time.Duration // 等待时间，小于0表示永远等待，0表示不等待，大于0表示等待指定时间. 默认0
+	ttl  time.Duration // 过期时间，大于0表示到期自动解锁，小于等于0表示永不自动解锁. 默认15s
+}
+
+type LockOption func(*LockOptions)
+
+func LockWait(wait time.Duration) LockOption {
+	return func(o *LockOptions) {
+		o.wait = wait
+	}
+}
+
+func LockTTL(ttl time.Duration) LockOption {
+	return func(o *LockOptions) {
+		o.ttl = ttl
+	}
+}
 
 /*
 定义内存分区锁和分布式锁两个interface，剪裁 micro sync.Sync，只保留 Lock 和 Unlock 两个方法
@@ -20,7 +40,7 @@ import (
 // ttl 从锁定时算起
 type MemSync interface {
 	// Lock acquires a lock
-	Lock(id string, opts ...sync.LockOption) error
+	Lock(id string, opts ...LockOption) error
 	// Unlock releases a lock
 	Unlock(id string)
 }
@@ -60,8 +80,16 @@ type syncAdapter struct {
 	mutex sync.Sync
 }
 
-func (p *syncAdapter) Lock(id string, opts ...sync.LockOption) error {
-	return p.mutex.Lock(id, opts...)
+func (p *syncAdapter) Lock(id string, opts ...LockOption) error {
+	o := &LockOptions{
+		wait: 0,
+		ttl:  15 * time.Second,
+	}
+	for _, opt := range opts {
+		opt(o)
+	}
+
+	return p.mutex.Lock(id, sync.LockTTL(o.ttl), sync.LockWait(o.wait))
 }
 func (p *syncAdapter) Unlock(id string) {
 	if err := p.mutex.Unlock(id); err != nil {

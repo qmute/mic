@@ -15,7 +15,7 @@ require (
 	github.com/onsi/gomega v1.28.1
 	github.com/pkg/errors v0.9.1
 	github.com/quexer/rmq/v4 v4.0.3
-	github.com/quexer/syncr v0.0.0-20231027022907-f3b38a982442
+	github.com/quexer/syncr v0.0.0-20231027051100-dbd1ec0ac73d
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/sirupsen/logrus v1.9.3
 	go-micro.dev/v4 v4.10.2
