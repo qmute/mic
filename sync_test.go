@@ -6,8 +6,6 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/quexer/syncr"
-	"go-micro.dev/v4"
-	"go-micro.dev/v4/registry"
 	"go-micro.dev/v4/sync"
 
 	"gitlab.51baibao.com/server/mic/v4"
@@ -39,7 +37,7 @@ var _ = Describe("Sync", func() {
 	PContext("Sync", func() {
 		It("Ttl", func() {
 
-			mutex := mic.NewSync(micro.NewService(micro.Registry(&dummyConsul{})))
+			mutex := mic.NewSync("consul", "bj-meishi-dev-host.51baibao.com:8500")
 			{
 				err := mutex.Lock("test", sync.LockTTL(10*time.Second))
 				Ω(err).To(Succeed())
@@ -59,47 +57,3 @@ var _ = Describe("Sync", func() {
 		})
 	})
 })
-
-// 为方便测试，本地实现的dummy consul registry
-type dummyConsul struct {
-}
-
-func (p *dummyConsul) Init(option ...registry.Option) error {
-	// TODO implement me
-	panic("implement me")
-}
-
-func (p *dummyConsul) Options() registry.Options {
-	return registry.Options{
-		Addrs: []string{"bj-meishi-dev-host.51baibao.com:8500"},
-	}
-}
-
-func (p *dummyConsul) Register(service *registry.Service, option ...registry.RegisterOption) error {
-	// TODO implement me
-	panic("implement me")
-}
-
-func (p *dummyConsul) Deregister(service *registry.Service, option ...registry.DeregisterOption) error {
-	// TODO implement me
-	panic("implement me")
-}
-
-func (p *dummyConsul) GetService(s string, option ...registry.GetOption) ([]*registry.Service, error) {
-	// TODO implement me
-	panic("implement me")
-}
-
-func (p *dummyConsul) ListServices(option ...registry.ListOption) ([]*registry.Service, error) {
-	// TODO implement me
-	panic("implement me")
-}
-
-func (p *dummyConsul) Watch(option ...registry.WatchOption) (registry.Watcher, error) {
-	// TODO implement me
-	panic("implement me")
-}
-
-func (p *dummyConsul) String() string {
-	return "consul"
-}

@@ -3,8 +3,8 @@ package mic
 import (
 	"log"
 
-	"go-micro.dev/v4"
 	"go-micro.dev/v4/logger"
+	"go-micro.dev/v4/registry"
 	"go-micro.dev/v4/sync"
 
 	"github.com/quexer/syncr"
@@ -38,18 +38,15 @@ func NewMemSync() MemSync {
 }
 
 // NewSync 创建分布式锁
-// 根据当前注册中心创建对应实现。已支持的注册中心有：本地mdns、consul
-// 注：本地开发时会回退到内存锁，不具备跨进程能力
-func NewSync(service micro.Service) Sync {
-	registry := service.Options().Registry
-	switch registry.String() {
+// tp 底层实现类型。 支持的类型有 consul, 空字符串(内存锁）
+func NewSync(tp string, addr ...string) Sync {
+	switch tp {
 	case "consul":
-		// 如果是consul，那么就重用服务地址作consul sync
 		return &syncAdapter{mutex: syncr.NewConsulSync(
-			sync.Nodes(registry.Options().Addrs...),
+			sync.Nodes(addr...),
 			sync.Prefix("dlock/"), // 写死前缀，避免与其它值
 		)}
-	case "mdns":
+	case "":
 		// 内存锁，用于本地开发
 		return &syncAdapter{mutex: syncr.NewMemorySync()}
 	default:
