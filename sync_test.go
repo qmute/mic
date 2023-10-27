@@ -3,6 +3,7 @@ package mic_test
 import (
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -45,8 +46,14 @@ var _ = Describe("Sync", func() {
 		})
 	})
 	Context("Sync", func() {
+
 		PIt("Ttl", func() {
-			mutex := mic.NewSync("consul", "bj-meishi-dev-host.51baibao.com:8500")
+			err := os.Setenv("MICRO_REGISTRY", "consul")
+			Ω(err).To(Succeed())
+			err = os.Setenv("MICRO_REGISTRY_ADDRESS", "bj-meishi-dev-host.51baibao.com:8500")
+			Ω(err).To(Succeed())
+
+			mutex := mic.NewSync()
 
 			id := fmt.Sprintf("test:%d", time.Now().UnixMilli())
 			{

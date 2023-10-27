@@ -2,6 +2,8 @@ package mic
 
 import (
 	"log"
+	"os"
+	"strings"
 	"time"
 
 	"go-micro.dev/v4/logger"
@@ -60,13 +62,17 @@ func NewMemSync() MemSync {
 }
 
 // NewSync 创建分布式锁
-// tp 底层实现类型。 支持的类型有 consul, 空字符串(内存锁）
-func NewSync(tp string, addr ...string) Sync {
+// 读取micro 注册中心环境变量，创建分布式锁实例。如果注册中心为空，则创建内存锁
+// 目前支持 consul
+func NewSync() Sync {
+	tp := os.Getenv("MICRO_REGISTRY")
+	addr := os.Getenv("MICRO_REGISTRY_ADDRESS")
+
 	switch tp {
 	case "consul":
 		return &syncAdapter{mutex: syncr.NewConsulSync(
-			sync.Nodes(addr...),
-			sync.Prefix("dlock/"), // 写死前缀，避免与其它值
+			sync.Nodes(strings.Split(addr, ",")...),
+			sync.Prefix("dlock/"), // 写死前缀，避免与其它值冲突
 		)}
 	case "":
 		// 内存锁，用于本地开发
