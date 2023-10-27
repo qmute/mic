@@ -12,18 +12,20 @@ import (
 )
 
 type LockOptions struct {
-	wait time.Duration // 等待时间，小于0表示永远等待，0表示不等待，大于0表示等待指定时间. 默认0
-	ttl  time.Duration // 过期时间，大于0表示到期自动解锁，小于等于0表示永不自动解锁. 默认15s
+	wait time.Duration // 等待时间
+	ttl  time.Duration // 过期时间
 }
 
 type LockOption func(*LockOptions)
 
+// LockWait 设置等待时间. 小于0表示永远等待，0表示不等待，大于0表示等待指定时间. 默认0
 func LockWait(wait time.Duration) LockOption {
 	return func(o *LockOptions) {
 		o.wait = wait
 	}
 }
 
+// LockTTL 过期时间，大于0表示到期自动解锁，否则表示永不自动解锁. 默认15s
 func LockTTL(ttl time.Duration) LockOption {
 	return func(o *LockOptions) {
 		o.ttl = ttl
