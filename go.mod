@@ -15,7 +15,7 @@ require (
 	github.com/onsi/gomega v1.28.1
 	github.com/pkg/errors v0.9.1
 	github.com/quexer/rmq/v4 v4.0.3
-	github.com/quexer/syncr v0.0.0-20231026111852-7b4164d18086
+	github.com/quexer/syncr v0.0.0-20231027022907-f3b38a982442
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/sirupsen/logrus v1.9.3
 	go-micro.dev/v4 v4.10.2
@@ -55,7 +55,7 @@ require (
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/pprof v0.0.0-20230821062121-407c9e7a662f // indirect
-	github.com/google/uuid v1.3.1 // indirect
+	github.com/google/uuid v1.4.0 // indirect
 	github.com/hashicorp/consul/api v1.25.1 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-hclog v1.5.0 // indirect
