@@ -14,7 +14,7 @@ import (
 )
 
 type LockOptions struct {
-	wait time.Duration // 等待时间
+	wait time.Duration // 冲突等待时间
 	ttl  time.Duration // 过期时间
 }
 
@@ -48,26 +48,16 @@ func LockNoTTL() LockOption {
 	}
 }
 
-/*
-定义内存分区锁和分布式锁两个interface，剪裁 micro sync.Sync，只保留 Lock 和 Unlock 两个方法
-这样可以在使用时明确区分，也方便依赖注入
-*/
-
-// MemSync 内存分区锁，是 micro sync.Sync 的剪裁版本
-type MemSync interface {
+// Sync 互斥锁，是 micro sync.Sync 的剪裁版本
+type Sync interface {
 	// Lock acquires a lock
 	Lock(id string, opts ...LockOption) error
 	// Unlock releases a lock
 	Unlock(id string)
 }
 
-// Sync 分布式锁，是 micro sync.Sync 的剪裁版本
-type Sync interface {
-	MemSync
-}
-
 // NewMemSync 创建内存锁
-func NewMemSync() MemSync {
+func NewMemSync() Sync {
 	return &syncAdapter{mutex: syncr.NewMemorySync()}
 }
 
