@@ -20,10 +20,17 @@ type LockOptions struct {
 
 type LockOption func(*LockOptions)
 
-// LockWait 设置等待时间. 小于0表示永远等待，0表示不等待，大于0表示等待指定时间. 默认0
+// LockWait 设置冲突等待时间. 小于0表示永远等待，0表示不等待，大于0表示等待指定时间. 默认不等待
 func LockWait(wait time.Duration) LockOption {
 	return func(o *LockOptions) {
 		o.wait = wait
+	}
+}
+
+// LockLongWait 持续等待，直到成功取得锁. 等价于 LockWait(-1)
+func LockLongWait() LockOption {
+	return func(o *LockOptions) {
+		o.wait = -1
 	}
 }
 
@@ -34,14 +41,19 @@ func LockTTL(ttl time.Duration) LockOption {
 	}
 }
 
+// LockNoTTL 无过期，永不自动解锁. 等价于 LockTTL(0)
+func LockNoTTL() LockOption {
+	return func(o *LockOptions) {
+		o.ttl = 0
+	}
+}
+
 /*
 定义内存分区锁和分布式锁两个interface，剪裁 micro sync.Sync，只保留 Lock 和 Unlock 两个方法
-这样可以在使用时明确区分，也方便依赖注入。注意：二者ttl语义不同
+这样可以在使用时明确区分，也方便依赖注入
 */
 
 // MemSync 内存分区锁，是 micro sync.Sync 的剪裁版本
-// 仅在Lock超时时返回 sync.ErrLockTimeout，其它场景不会报错
-// ttl 从锁定时算起
 type MemSync interface {
 	// Lock acquires a lock
 	Lock(id string, opts ...LockOption) error
@@ -50,8 +62,6 @@ type MemSync interface {
 }
 
 // Sync 分布式锁，是 micro sync.Sync 的剪裁版本
-// 注意：ttl 从程序时退出算起，相当于重启前一直有效，所以一定要 Unlock
-// wait 默认15s
 type Sync interface {
 	MemSync
 }
@@ -90,8 +100,8 @@ type syncAdapter struct {
 
 func (p *syncAdapter) Lock(id string, opts ...LockOption) error {
 	o := &LockOptions{
-		wait: 0,
-		ttl:  15 * time.Second,
+		wait: 0,                // 默认不等待
+		ttl:  15 * time.Second, // 默认15s，过期自动解锁
 	}
 	for _, opt := range opts {
 		opt(o)
