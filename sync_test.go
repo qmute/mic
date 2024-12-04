@@ -50,7 +50,7 @@ var _ = Describe("Sync", func() {
 		PIt("Ttl", func() {
 			err := os.Setenv("MICRO_REGISTRY", "consul")
 			Ω(err).To(Succeed())
-			err = os.Setenv("MICRO_REGISTRY_ADDRESS", "bj-meishi-dev-host.51baibao.com:8500")
+			err = os.Setenv("MICRO_REGISTRY_ADDRESS", "")
 			Ω(err).To(Succeed())
 
 			mutex := mic.NewSync()
