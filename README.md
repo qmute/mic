@@ -4,7 +4,7 @@
 
 主入口见 DefaultService
 
-install:  `go get github.com/qmute/mic`
+install:  `go get github.com/qmute/mic/v4`
     
 change log:
 
