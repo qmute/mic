@@ -5,10 +5,10 @@ import (
 	. "github.com/onsi/gomega"
 	"go.uber.org/mock/gomock"
 
-	"gitlab.51baibao.com/server/mic/v4/internal/mocks"
-	"gitlab.51baibao.com/server/mic/v4/internal/mocks/mserver"
+	"github.com/qmute/mic/v4/internal/mocks"
+	"github.com/qmute/mic/v4/internal/mocks/mserver"
 
-	"gitlab.51baibao.com/server/mic/v4"
+	"github.com/qmute/mic/v4"
 )
 
 var _ = Describe("EventBus", func() {

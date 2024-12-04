@@ -15,7 +15,7 @@ import (
 	limiter "github.com/go-micro/plugins/v4/wrapper/ratelimiter/uber"
 	"go-micro.dev/v4/web"
 
-	"gitlab.51baibao.com/server/mic/v4/internal"
+	"github.com/qmute/mic/v4/internal"
 )
 
 // Opt grpc server 初始化选项

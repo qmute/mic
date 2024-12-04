@@ -10,7 +10,7 @@ import (
 	. "github.com/onsi/gomega"
 	"go-micro.dev/v4/sync"
 
-	"gitlab.51baibao.com/server/mic/v4"
+	"github.com/qmute/mic/v4"
 )
 
 var _ = Describe("Sync", func() {

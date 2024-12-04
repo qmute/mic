@@ -8,8 +8,8 @@ import (
 	. "github.com/onsi/gomega"
 	"go-micro.dev/v4/server"
 
-	"gitlab.51baibao.com/server/mic/v4/internal"
-	"gitlab.51baibao.com/server/mic/v4/internal/mocks/mserver"
+	"github.com/qmute/mic/v4/internal"
+	"github.com/qmute/mic/v4/internal/mocks/mserver"
 )
 
 var _ = Describe("GrpcWrapper", func() {

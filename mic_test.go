@@ -4,7 +4,7 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	. "gitlab.51baibao.com/server/mic/v4"
+	. "github.com/qmute/mic/v4"
 )
 
 var _ = Describe("Mic", func() {

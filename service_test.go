@@ -5,7 +5,7 @@ import (
 	. "github.com/onsi/gomega"
 	"go-micro.dev/v4"
 
-	"gitlab.51baibao.com/server/mic/v4"
+	"github.com/qmute/mic/v4"
 )
 
 var _ = Describe("Service", func() {

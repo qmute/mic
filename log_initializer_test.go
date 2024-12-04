@@ -5,7 +5,7 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	"go-micro.dev/v4/logger"
 
-	"gitlab.51baibao.com/server/mic/v4"
+	"github.com/qmute/mic/v4"
 )
 
 var _ = Describe("LogInitializer", func() {
