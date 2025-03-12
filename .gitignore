@@ -1,0 +1,9 @@
+.idea
+out
+.DS_Store
+build
+bin
+*.iml
+*.sublime-workspace
+.vscode
+*.coverprofile
