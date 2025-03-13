@@ -1,6 +1,6 @@
 package ut
 
-import "go-micro.dev/v4/errors"
+import "go-micro.dev/v5/errors"
 
 func ParseMicError(err error) (*errors.Error, bool) {
 	if err == nil {

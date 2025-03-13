@@ -2,9 +2,9 @@ package mic
 
 import (
 	"github.com/gin-gonic/gin"
-	logPlugin "github.com/go-micro/plugins/v4/logger/logrus"
+	logPlugin "github.com/micro/plugins/v5/logger/logrus"
 	"github.com/sirupsen/logrus"
-	"go-micro.dev/v4/logger"
+	"go-micro.dev/v5/logger"
 )
 
 // InitLogger 日志初始化

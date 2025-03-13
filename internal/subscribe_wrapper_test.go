@@ -6,10 +6,10 @@ import (
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	"go-micro.dev/v4/server"
+	"go-micro.dev/v5/server"
 
-	"github.com/qmute/mic/v4/internal"
-	"github.com/qmute/mic/v4/internal/mocks/mserver"
+	"github.com/qmute/mic/v5/internal"
+	"github.com/qmute/mic/v5/internal/mocks/mserver"
 )
 
 var _ = Describe("SubscribeWrapper", func() {

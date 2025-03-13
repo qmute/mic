@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/pkg/errors"
-	"go-micro.dev/v4/logger"
+	"go-micro.dev/v5/logger"
 )
 
 // Initializer 初始化器

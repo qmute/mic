@@ -1,26 +1,16 @@
-module github.com/qmute/mic/v4
+module github.com/qmute/mic/v5
 
-go 1.22.0
-
-toolchain go1.23.3
+go 1.24.1
 
 require (
 	github.com/afex/hystrix-go v0.0.0-20180502004556-fa1af6a1f4f5
 	github.com/gin-gonic/gin v1.10.0
-	github.com/go-micro/plugins/v4/client/grpc v1.2.1
-	github.com/go-micro/plugins/v4/logger/logrus v1.2.0
-	github.com/go-micro/plugins/v4/server/grpc v1.2.0
-	github.com/go-micro/plugins/v4/wrapper/breaker/hystrix v1.2.0
-	github.com/go-micro/plugins/v4/wrapper/monitoring/prometheus v1.2.0
-	github.com/go-micro/plugins/v4/wrapper/ratelimiter/uber v1.2.0
 	github.com/onsi/ginkgo/v2 v2.22.0
 	github.com/onsi/gomega v1.36.0
 	github.com/pkg/errors v0.9.1
-	github.com/quexer/rmq/v4 v4.0.3
-	github.com/quexer/syncr v0.0.0-20231027072233-6a5824425470
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/sirupsen/logrus v1.9.3
-	go-micro.dev/v4 v4.10.2
+	go-micro.dev/v5 v5.3.0
 	go.uber.org/mock v0.5.0
 )
 
@@ -55,7 +45,7 @@ require (
 	github.com/go-task/slim-sprig/v3 v3.0.0 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
-	github.com/golang/protobuf v1.5.3 // indirect
+	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/pprof v0.0.0-20241029153458-d1b30febd7db // indirect
 	github.com/google/uuid v1.4.0 // indirect
@@ -75,6 +65,7 @@ require (
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
+	github.com/micro/plugins/v5/broker/rabbitmq v1.0.2 // indirect
 	github.com/miekg/dns v1.1.55 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect

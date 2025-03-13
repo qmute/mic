@@ -6,7 +6,7 @@ import (
 	"runtime/debug"
 
 	"github.com/sirupsen/logrus"
-	"go-micro.dev/v4/server"
+	"go-micro.dev/v5/server"
 )
 
 // SubscribeErrLogWrapper 包装事件订阅，出错时打panic日志(带stack)

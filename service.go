@@ -4,18 +4,18 @@ import (
 	"time"
 
 	"github.com/afex/hystrix-go/hystrix"
-	"go-micro.dev/v4"
-	log "go-micro.dev/v4/logger"
-	"go-micro.dev/v4/server"
+	"go-micro.dev/v5"
+	log "go-micro.dev/v5/logger"
+	"go-micro.dev/v5/server"
 
-	grpcClient "github.com/go-micro/plugins/v4/client/grpc"
-	grpcServer "github.com/go-micro/plugins/v4/server/grpc"
-	hystrixPlugin "github.com/go-micro/plugins/v4/wrapper/breaker/hystrix"
-	"github.com/go-micro/plugins/v4/wrapper/monitoring/prometheus"
-	limiter "github.com/go-micro/plugins/v4/wrapper/ratelimiter/uber"
-	"go-micro.dev/v4/web"
+	grpcClient "github.com/micro/plugins/v5/client/grpc"
+	grpcServer "github.com/micro/plugins/v5/server/grpc"
+	hystrixPlugin "github.com/micro/plugins/v5/wrapper/breaker/hystrix"
+	"github.com/micro/plugins/v5/wrapper/monitoring/prometheus"
+	limiter "github.com/micro/plugins/v5/wrapper/ratelimiter/uber"
+	"go-micro.dev/v5/web"
 
-	"github.com/qmute/mic/v4/internal"
+	"github.com/qmute/mic/v5/internal"
 )
 
 // Opt grpc server 初始化选项

@@ -3,8 +3,9 @@ package mic
 import (
 	"log"
 
-	"github.com/quexer/rmq/v4"
-	"go-micro.dev/v4/server"
+	"github.com/micro/plugins/v5/broker/rabbitmq"
+
+	"go-micro.dev/v5/server"
 )
 
 // RabbitMQDurableQueue 开启rabbitMQ的持久化订阅
@@ -17,10 +18,10 @@ func RabbitMQDurableQueue(name string) server.SubscriberOption {
 		log.Fatal("DurableQueue doesn't work with empty name")
 	}
 	// 为实现可靠订阅， 以下几项必须同时使用
-	fName := server.SubscriberQueue(name)      // 固定名字
-	fDurable := rmq.ServerDurableQueue()       // 队列持久化
-	fDisableAutoAck := server.DisableAutoAck() // 禁用自动ack（同时影响mq connection 和 broker 的处理逻辑）
-	fAckOnSuccess := rmq.ServerAckOnSuccess()  // 确认成功后才ack
+	fName := server.SubscriberQueue(name)          // 固定名字
+	fDurable := rabbitmq.ServerDurableQueue()      // 队列持久化
+	fDisableAutoAck := server.DisableAutoAck()     // 禁用自动ack（同时影响mq connection 和 broker 的处理逻辑）
+	fAckOnSuccess := rabbitmq.ServerAckOnSuccess() // 确认成功后才ack
 	return func(o *server.SubscriberOptions) {
 		fName(o)
 		fDurable(o)

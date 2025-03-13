@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/quexer/rmq/v4"
-	"go-micro.dev/v4"
+	"github.com/micro/plugins/v5/broker/rabbitmq"
+	"go-micro.dev/v5"
 )
 
 // EventPub 事件发布接口
@@ -41,7 +41,7 @@ func NewMicroEventBus(service micro.Service) *MicroEventBus {
 // Pub 发布消息
 func (p *MicroEventBus) Pub(ctx context.Context, topic string, msg interface{}) error {
 	// 目前的应用场景全是持久化的。  若以后遇到其它情况，到时再扩展接口
-	return p.getPublisher(topic).Publish(ctx, msg, rmq.PublishDeliveryMode(2))
+	return p.getPublisher(topic).Publish(ctx, msg, rabbitmq.PublishDeliveryMode(2))
 }
 
 func (p *MicroEventBus) getPublisher(topic string) micro.Event {

@@ -3,9 +3,9 @@ package mic_test
 import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	"go-micro.dev/v4"
+	"go-micro.dev/v5"
 
-	"github.com/qmute/mic/v4"
+	"github.com/qmute/mic/v5"
 )
 
 var _ = Describe("Service", func() {

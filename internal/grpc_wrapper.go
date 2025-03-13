@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/sirupsen/logrus"
-	"go-micro.dev/v4/server"
+	"go-micro.dev/v5/server"
 )
 
 // GrpcErrLogWrapper serverWrapper to print err stack
