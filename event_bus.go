@@ -59,8 +59,8 @@ func (p *MicroEventBus) getPublisher(topic string) micro.Event {
 // Sub 订阅消息
 func (p *MicroEventBus) Sub(topic string, hdl interface{}, queue ...string) error {
 	name := topic
-	if len(queue) > 0 {
-		name = fmt.Sprintf("%s:%s", topic, queue[0])
+	if len(queue) > 0 && queue[0] != "" {
+		name = fmt.Sprintf("%s-%s", topic, queue[0])
 	}
 	return micro.RegisterSubscriber(topic, p.microService.Server(), hdl, RabbitMQDurableQueue(name))
 }
