@@ -19,6 +19,7 @@ go install github.com/swaggo/swag/cmd/swag@latest
 # 安装wire
 go install github.com/google/wire/cmd/wire@latest
 # 安装protoc
+brew install protobuf
 go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 # 安装 micro protoc generator(v4)
 go install github.com/go-micro/generator/cmd/protoc-gen-micro@latest
