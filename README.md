@@ -1,6 +1,6 @@
 # mic
 
-wrapper and helper for [go-micro v4](https://github.com/micro/go-micro)
+wrapper and helper for [go-micro v5](https://github.com/micro/go-micro)
 
 
 see DefaultService for main entry
