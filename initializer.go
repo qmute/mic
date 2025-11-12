@@ -3,7 +3,7 @@ package mic
 import (
 	"context"
 
-	"github.com/pkg/errors"
+	"github.com/cockroachdb/errors"
 	"go-micro.dev/v4/logger"
 )
 

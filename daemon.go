@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"runtime/debug"
 
-	"github.com/pkg/errors"
+	"github.com/cockroachdb/errors"
 	"github.com/robfig/cron/v3"
 	log "go-micro.dev/v4/logger"
 )
@@ -74,7 +74,7 @@ func daemonRecover(logger cron.Logger) cron.JobWrapper {
 				if r := recover(); r != nil {
 					err, ok := r.(error)
 					if !ok {
-						err = errors.Errorf("%+v", ok)
+						err = errors.Errorf("%+v", r)
 					}
 					stack := string(debug.Stack())
 					log.Fields(map[string]interface{}{"stack": stack}).Logf(log.ErrorLevel, "job panic %+v", err)
