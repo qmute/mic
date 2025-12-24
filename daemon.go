@@ -22,25 +22,25 @@ func InitDaemon(it ...Daemon) error {
 	c := newCron()
 	for _, v := range it {
 		spec, fn := v.Job()
-		// 定义了cron， 则加入执行引擎
-		if spec != "" {
-			if _, err := c.AddFunc(spec, func() {
+		if spec == "" {
+			// 没有定义cron， 则启动单独线程运行， 并作panic保护
+			go func(f func(context.Context) error) {
+				defer daemonRecoverGuard()
+				if err := f(context.Background()); err != nil {
+					log.Logf(log.ErrorLevel, "job panic %+v", err)
+				}
+			}(fn)
+		} else {
+			// 定义了cron， 则加入执行引擎
+			_, err := c.AddFunc(spec, func() {
 				if err := fn(context.Background()); err != nil {
 					log.Logf(log.ErrorLevel, "job panic %+v", err)
 				}
-			}); err != nil {
+			})
+			if err != nil {
 				return errors.WithStack(err)
 			}
-			continue
 		}
-
-		// 没有定义cron， 则启动单独线程运行， 并作panic保护
-		go func(f func(context.Context) error) {
-			defer daemonRecoverGuard()
-			if err := f(context.Background()); err != nil {
-				log.Logf(log.ErrorLevel, "job panic %+v", err)
-			}
-		}(fn)
 	}
 	c.Start()
 	return nil
