@@ -36,17 +36,7 @@ func InitDaemon(it ...Daemon) error {
 
 		// 没有定义cron， 则启动单独线程运行， 并作panic保护
 		go func(f func(context.Context) error) {
-			defer func() {
-				if e := recover(); e != nil {
-					err, ok := e.(error)
-					if !ok {
-						err = errors.Errorf("%+v", err)
-					}
-					stack := string(debug.Stack())
-					log.Fields(map[string]interface{}{"stack": stack}).Logf(log.ErrorLevel, "job panic %+v", err)
-					fmt.Printf("job panic %+v\n%s\n", err, stack)
-				}
-			}()
+			defer daemonRecoverGuard()
 			if err := f(context.Background()); err != nil {
 				log.Logf(log.ErrorLevel, "job panic %+v", err)
 			}
@@ -60,29 +50,31 @@ func InitDaemon(it ...Daemon) error {
 func newCron() *cron.Cron {
 	logger := &daemonLogger{}
 	chain := cron.WithChain(
-		daemonRecover(logger),
+		recoverWrapper(logger),
 		cron.DelayIfStillRunning(logger),
 	)
 	return cron.New(cron.WithLogger(logger), chain)
 }
 
 // Recover panics in wrapped jobs and log them with the provided logger.
-func daemonRecover(logger cron.Logger) cron.JobWrapper {
-	return func(j cron.Job) cron.Job {
+func recoverWrapper(logger cron.Logger) cron.JobWrapper {
+	return func(job cron.Job) cron.Job {
 		return cron.FuncJob(func() {
-			defer func() {
-				if e := recover(); e != nil {
-					err, ok := e.(error)
-					if !ok {
-						err = errors.Errorf("%+v", err)
-					}
-					stack := string(debug.Stack())
-					log.Fields(map[string]interface{}{"stack": stack}).Logf(log.ErrorLevel, "job panic %+v", err)
-					fmt.Printf("job panic %+v\n%s\n", err, stack)
-				}
-			}()
-			j.Run()
+			defer daemonRecoverGuard()
+			job.Run()
 		})
+	}
+}
+
+func daemonRecoverGuard() {
+	if e := recover(); e != nil {
+		err, ok := e.(error)
+		if !ok {
+			err = errors.Errorf("%+v", err)
+		}
+		stack := string(debug.Stack())
+		log.Fields(map[string]interface{}{"stack": stack}).Logf(log.ErrorLevel, "job panic %+v", err)
+		fmt.Printf("job panic %+v\n%s\n", err, stack)
 	}
 }
 
