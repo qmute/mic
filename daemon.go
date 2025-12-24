@@ -40,7 +40,7 @@ func InitDaemon(it ...Daemon) error {
 				if e := recover(); e != nil {
 					err, ok := e.(error)
 					if !ok {
-						err = errors.Errorf("%+v", ok)
+						err = errors.Errorf("%+v", err)
 					}
 					stack := string(debug.Stack())
 					log.Fields(map[string]interface{}{"stack": stack}).Logf(log.ErrorLevel, "job panic %+v", err)
@@ -71,10 +71,10 @@ func daemonRecover(logger cron.Logger) cron.JobWrapper {
 	return func(j cron.Job) cron.Job {
 		return cron.FuncJob(func() {
 			defer func() {
-				if r := recover(); r != nil {
-					err, ok := r.(error)
+				if e := recover(); e != nil {
+					err, ok := e.(error)
 					if !ok {
-						err = errors.Errorf("%+v", ok)
+						err = errors.Errorf("%+v", err)
 					}
 					stack := string(debug.Stack())
 					log.Fields(map[string]interface{}{"stack": stack}).Logf(log.ErrorLevel, "job panic %+v", err)
